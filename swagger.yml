@@ -1,30 +1,789 @@
-openapi: '3.0.2'
+openapi: 3.0.0
+servers: []
 info:
-  title: OlearingAPI
-  version: '1.0'
-servers:
-  - url: https://oschool.topwork.asia/api
+  version: "1.0.0"
+  title: Course app api
+  description: >-
+    This is an example of using OAuth2 Password Flow in a specification to
+    describe security to your API.
+
 paths:
-  /test:
-    get:
-      responses:
-        '200':
-          description: OK
-
+  /oauth/token:
     post:
+      tags:
+        - Oauth
+      summary: Get JWT Token
+      description: >
+        send username password to get jwttoken from authentication service,
+      operationId: authToken
+      requestBody:
+        description: ต้องการ email password
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required:
+                - name
+                - email
       responses:
         '200':
-          description: OK
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+                  refreshToken:
+                    type: string
+                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+        '401':
+          description: Unauthorize
 
+  /oauth/refreshToken:
+    post:
+      tags:
+        - Oauth
+      summary: Refresh Token
+      description: >
+        using when access token are expire, you can use refresh token to request new access token instead log in to gain token again
+      operationId: authRefreshToken
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+        '401':
+          description: Unauthorized
+  /users:
+    post:
+      tags:
+        - Users
+      summary: สร้างบัญชีผู้ใช้(สำหรับผู้เรียน)
+      description: >
+        จะรับ payload ที่เป็น email password ของผู้ใช้
+      operationId: createUser
+      requestBody:
+        description: ต้องการ email password
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:  
+                  type: string
+                  format: email
+                password:   
+                  type: string
+              required:
+                - name
+                - email
+      responses:
+        '201':
+          description: Successful Account Create
+        '500':
+          description: Internal Server Error (Missing email or password)
+        '400':
+          description: Bad request (Duplicated Email)
+            
+
+  /users/profile:
+    get:
+      tags:
+        - Users
+      summary: ดึง profile ของ user 
+      description: >
+        ดึงรายละเอียดข้อมูล profile ของ user นั้นๆ ออกมา
+        
+      operationId: getUserProfileByToken
+      security:
+        - bearerAuth: []         # use the same name as above
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request (can't find user profile)
+        '401':
+            $ref: '#/components/responses/UnauthorizedError'
     patch:
+      tags:
+        - Users
+      summary: อัพเดต profile ส่วนข้อมูลส่วนตัว
+      description: >
+        ใส่ json pair values มาใน payload เฉพาะที่ต้องการเเก้ไข
+        
+      operationId: updateUserProfileByToken
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: ต้องการ email password
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
       responses:
         '200':
-          description: OK
+          description: Successful profile update
+        '400':
+          description: Bad Request (can't find user profile)
+        '401':
+            $ref: '#/components/responses/UnauthorizedError'
+        
+
+  /users/resetpassword:
+    post:
+      tags:
+        - Users
+      summary: รีเซ็ต password 
+      description: >
+        include the body with old password and new password
+      operationId: setPassword
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: ต้องการ email password
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldpassword:
+                  type: string
+                  example: helloKitty
+                newpassword:
+                  type: string
+                  example: helloJotaro
+      responses:
+        '200':
+          description: Successful reset password
+        '400':
+          description: Bad Request (can't find user profile)
+        '401':
+            $ref: '#/components/responses/UnauthorizedError'
+        
           
+  /Category:
+    get:
+      tags:
+        - Category
+      summary: ดึงข้อมูลประเภทของวิชาทั้งหมด
+      description: >
+        ดึงข้อมูลเเสดงประเภทหมวดหมู่ทั้งหมดว่ามี category กี่ประเภท
+      operationId: getCategories
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: integer
+          description: optional for define userId to recommend categories
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+                example:
+                  - category_id: 1
+                    category_name: Web Programimg
+                  - category_id: 2
+                    category_name: Web Design
+                  - category_id: 3
+                    category_name: Data Science
+        '500':
+          description: Internal Server Error
+  /courses:
+    get:
+      tags:
+        - Course
+      summary: ดึงข้อมูลวิชาทั้งหมด
+      description: >
+         ดึงข้อมูลทั้งหมดสามารถใส่ query พวก userId, items, category_id
+      operationId: getCourses
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: integer
+            default: None
+          description: optional for define userId to recommend categories
+        - in: query
+          name: category_id
+          schema:
+            type: integer
+            default: None
+          description: filter following category id
+        - in: query
+          name: items
+          schema:
+            type: integer
+            default: 20
+          description: number of course items
+          
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+                example:
+                  - course_id: 1
+                    course_name: Web Development with nodeJS
+                    course_description: Web Development for everyone who interested
+                    course_image: http://www.jenyalestina.com/blog/wp-content/uploads/2019/05/web-development-1024x582.jpg
+                    catergory_id: 1
+                  - course_id: 2
+                    course_name: Web Development with Ruby
+                    course_description: Web Development for everyone who interested
+                    course_image: http://www.jenyalestina.com/blog/wp-content/uploads/2019/05/web-development-1024x582.jpg
+                    catergory_id: 
+                  - course_id: 3
+                    course_name: Python Programming
+                    course_description: Python Programming for everyone who interested
+                    course_image: https://datawider.com/wp-content/uploads/2019/11/How-to-Learn-Python.jpg
+                    catergory_id: 2
+        '500':
+          description: Internal Server Error
 
-
-    
-
-
-
+  /course/my/{course_id}:
+    get:
+      tags:
+        - module
+      summary: ดึงข้อมูลของ course นั้นๆออกมาพร้อม submodule ทั้งหมด
+      description: >
+         ดึงข้อมูลของ course นั้นๆออกมาพร้อม submodule ทั้งหมดออกมา เเละ มีการทำ learning_progression ออกมาด้วย
+      operationId: getCourseById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: course_id
+          in: path
+          description: Course ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseWithModule'
+                
+        '400':
+          description: Bad Request (can't find user profile)
+        '401':
+            $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          description: Internal Server Error
+    post:
+      tags:
+        - Course
+      summary: บันทึก course ลงไปใน enrollment ของ user (enroll).
+      description: >
+        บันทึก course ใน enrollment ของ user ที่ระบุ
+      operationId: savetomycourse
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                course_id:
+                  type: integer
+                user_id:
+                  type: integer
+              example:
+                course_id: 1 
+                user_id: 1
+      parameters:
+        - name: course_id
+          in: path
+          description: Course ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Bad Request (can't find user profile)
+        '401':
+            $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          description: Internal Server Error
+    delete:
+      tags:
+        - Course
+      summary: ลบ course ลงไปใน enrollment ของ user (unenroll).
+      description: >
+        ลบ course ใน enrollment ของ user ที่ระบุ
+      operationId: deletemycourse
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: course_id
+          in: path
+          description: Course ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad Request (can't find user profile)
+        '401':
+            $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          description: Internal Server Error
   
+  /submodule/title/{submodule_id}:
+    get:
+      tags:
+        - title
+      summary: เเสดงข้อมูล title ทั้งหมดที่มีใน submodule นั้น
+      description: >
+        เเสดง list ของ title ใน submodule นั้นๆ ออกมา
+      operationId: getTitlesbySubmoduleId
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: submodule_id
+          in: path
+          description: submodule id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Title'
+                example:
+                  - title_id: 1
+                    module_id: 0
+                    title_image: http://www.jenyalestina.com/blog/wp-content/uploads/2019/05/web-development-1024x582.jpg
+                    title_name: แนวคิดเชิงนามธรรม
+                    title_description: แนวคิดเชิงนามธรรม (abstract thinking หรือ abstraction) เป็นองค์ประกอบหนึ่งของแนวคิดเชิงคำนวณ (computational thinking) ใช้กระบวนการคัดแยกคุณลักษณะที่สำคัญออกจากรายละเอียดปลีกย่อยในปัญหา หรืองานที่กำลังพิจาณา เพื่อให้ได้ข้อมูลที่จำเป็นและเพียงพอในการแก้ปัญหา
+                    title_type: content
+                  - title_id: 2
+                    module_id: 0
+                    title_image: http://www.jenyalestina.com/blog/wp-content/uploads/2019/05/web-development-1024x582.jpg
+                    title_name: ข้อใดคือแนวคิดเชิงนาม
+                    title_description: ข้อใดคือแนวคิดเชิงนามธรรม 1. คอมพิวเตอร์ IBM 
+                    title_type: quiz
+                    quizChoice: ["abstract thinking", "concrete thinking"]
+                    answer_index: 0
+                  - title_id: 3
+                    module_id: 0
+                    title_image: http://www.jenyalestina.com/blog/wp-content/uploads/2019/05/web-development-1024x582.jpg
+                    title_name: ข้อใดคือแนวคิดเชิงนาม
+                    title_description: ข้อใดคือแนวคิดเชิงนามธรรม 2. กางเกงสำเร็จรูปเด็ก (diapers)   
+                    title_type: quiz
+                    quizChoice: ["abstract thinking", "concrete thinking"]
+                    answer_index: 1
+        '401':
+            $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          description: Internal Server Error
+
+  /title/{title_id}:
+    get:
+      tags:
+        - title
+      summary: เเสดงข้อมูล title จาก id
+      description: >
+        เเสดง title จาก title ไอดีที่ให้มา
+      operationId: getTitlebyId
+      security:
+       - bearerAuth: []
+      parameters:
+        - name: title_id
+          in: path
+          description: submodule id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Title'
+              example:
+                title_id: 2
+                module_id: 0
+                title_image: http://www.jenyalestina.com/blog/wp-content/uploads/2019/05/web-development-1024x582.jpg
+                title_name: ข้อใดคือแนวคิดเชิงนาม
+                title_description: ข้อใดคือแนวคิดเชิงนามธรรม 1. คอมพิวเตอร์ IBM 
+                title_type: quiz
+                quizChoice: ["abstract thinking", "concrete thinking"]
+                answer_index: 0,
+                is_done: false
+  /learning_progress/title/{title_id}:
+    post:
+      tags:
+        - learning progress
+      summary: บันทึก learning progress ของ title จาก id 
+      description: >
+        ทำหลังจากที่ทำ title เสร็จจากนั้นก็ บันทึกลงฐานข้อมูลวา
+        ทำเรียบร้อยจากนั้นก็คำนวนคะเเนหรือให้ดาว
+      operationId: saveprogressTitlebyId
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Titleprogress'
+      parameters:
+        - name: title_id
+          in: path
+          description: submodule id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: Successful operation
+        '401':
+            $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          description: Internal Server Error
+        
+
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+  schemas:
+    Category:
+      type: object
+      properties:
+        category_id:
+          type: integer
+          format: int
+        category_name:
+          type: string
+      required:
+        - category_id
+        - category_name
+    Course:
+      type: object
+      properties:
+        course_id:
+          type: integer
+          format: int
+        course_name:
+          type: string
+        course_description:
+          type: string
+        course_image:
+          type: string
+        catergory_id:
+          type: integer
+          format: int
+      required:
+        - course_id
+        - course_name
+        - catergory_id
+      example:
+          course_id: 1
+          course_name: Web Development with nodeJS
+          course_description: Web Development for everyone who interested
+          course_image: http://www.jenyalestina.com/blog/wp-content/uploads/2019/05/web-development-1024x582.jpg
+          catergory_id: 1
+
+    CourseWithModule:
+      type: object
+      properties:
+        course_id:
+          type: integer
+          format: int
+        course_name:
+          type: string
+        course_description:
+          type: string
+        course_image:
+          type: string
+        catergory_id:
+          type: integer
+          format: int
+        course_progess:
+          type: number
+          format: float
+        modules:
+          type: array
+          items:
+            type: object
+            properties:
+              module_id:
+                type: integer
+                format: int
+              module_name:
+                type: string
+              module_description:
+                type: string
+              submodules:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submodule'
+            required:
+              - module_id
+              - module_name
+              - course_id
+              - submodules
+      example:
+          course_id: 1
+          course_name: Web Development
+          course_description: Web Development for everyone who interested
+          course_image: http://www.jenyalestina.com/blog/wp-content/uploads/2019/05/web-development-1024x582.jpg
+          catergory_id: 1
+          course_progress: 0.55
+          modules:
+            - module_id: 1
+              module_name: HTML BASIC
+              module_description: about html
+              submodules:
+                - submodule_id: 1
+                  submodule_name: Discovering HTML and Tags
+                  submodule_description: none
+                  submodule_progress: 0.50
+                - submodule_id: 2
+                  submodule_name: Structuring Text with Tags
+                  submodule_description: none
+                  submodule_progress: 0.50
+                - submodule_id: 3
+                  submodule_name: Building a button
+                  submodule_description: none
+                  submodule_progress: 0.50
+                - submodule_id: 4
+                  submodule_name: Creating Link
+                  submodule_description: none
+                  submodule_progress: 0.60
+            - module_id: 2
+              module_name: CSS BASIC
+              module_description: about css
+              submodules:
+                - submodule_id: 5
+                  submodule_name: Discovering HTML and Tags
+                  submodule_description: none
+                  submodule_progress: 0.50
+                - submodule_id: 6
+                  submodule_name: Structuring Text with Tags
+                  submodule_description: none
+                  submodule_progress: 0.50
+                - submodule_id: 7
+                  submodule_name: Building a button
+                  submodule_description: none
+                  submodule_progress: 0.50
+                - submodule_id: 8
+                  submodule_name: Creating Link
+                  submodule_description: none
+                  submodule_progress: 0.60
+            - module_id: 3
+              module_name: JS BASIC
+              module_description: about javascripts
+              submodules:
+                - submodule_id: 9
+                  submodule_name: Discovering HTML and Tags
+                  submodule_description: none
+                  submodule_progress: 0.50
+                - submodule_id: 10
+                  submodule_name: Structuring Text with Tags
+                  submodule_description: none
+                  submodule_progress: 0.50
+                - submodule_id: 11
+                  submodule_name: Building a button
+                  submodule_description: none
+                  submodule_progress: 0.50
+                - submodule_id: 12
+                  submodule_name: Creating Link
+                  submodule_description: none
+                  submodule_progress: 0.60
+    Module:
+      type: object
+      properties:
+        module_id:
+          type: integer
+          format: int
+        module_name:
+          type: string
+        module_description:
+          type: string
+      required:
+        - module_id
+        - module_name
+        - course_id
+    Submodule:
+      type: object
+      properties:
+        submodule_id:
+          type: integer
+          format: int
+        submodule_name:
+          type: string
+        submodule_description:
+          type: string
+        module_id:
+          type: string
+        submodule_progress:
+          type: string
+          description: virtual attribute
+      required:
+        - submodule_id
+        - module_id
+        - submodule_name
+    Title:
+        type: object
+        properties:
+          title_id:
+            type: string
+          title_image:
+            type: string
+          title_name:
+            type: string
+          title_description:
+            type: string
+          title_type:
+            type: string
+            enum: ['Quiz', 'CONTENT']
+          module_id:
+            type: integer
+            format: int
+          is_done:
+            type: boolean
+          quizChoice:
+            type: array
+            items:
+              type: string
+            example: ["abstract thinking", "concrete thinking"]
+          answer_index:
+            type: integer
+        required:
+        - title_id
+        - title_name
+        - title_type
+        - module_id
+    User:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        role:
+          type: string
+        authentication_key:
+          type: string
+        watch_time:
+          type: string
+          format: date-time
+        birthday:
+          type: string
+          format: date
+        remember_token:
+          type: string
+        phone:
+          type: string
+        gender:
+          type: string
+        address:
+          type: string
+        blood_group:
+          type: string
+      required:
+        - user_id
+    Titleprogress:
+      type: object
+      properties:
+        titleprogress_id:
+          type: integer
+          format: int
+        type:
+          type: string
+          enum: ['quiz', 'content']
+        score: 
+          type: integer
+          description: for type is 'quiz' will have score
+        status:
+          type: string
+          enum: ['finish', 'unfinish']
+        start_time:
+          type: string
+          format: datetime
+        finish_time:
+          type: string
+          format: datetime
+      required:
+        - titleprogress_id
+        - type
+    Enrollment:
+      type: object
+      properties:
+        enrollment_id:
+          type: integer
+        user_id:
+          type: integer
+        course_id:
+          type: integer
+        start_date:
+          type: string
+          format: datetime
+        finish_date:
+          type: string
+          format: datetime

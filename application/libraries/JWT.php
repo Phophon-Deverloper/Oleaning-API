@@ -96,7 +96,7 @@ class JWT
         if (!in_array($header->alg, $allowed_algs)) {
             throw new UnexpectedValueException('Algorithm not allowed');
         }
-        if (is_array($key) || $key instanceof \ArrayAccess) {
+        if (is_array($key) || $key instanceof ArrayAccess) {
             if (isset($header->kid)) {
                 if (!isset($key[$header->kid])) {
                     throw new UnexpectedValueException('"kid" invalid, unable to lookup correct key');
