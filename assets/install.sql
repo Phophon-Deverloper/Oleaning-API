@@ -837,6 +837,149 @@ CREATE TABLE `users` (
   `watch_history` longtext COLLATE utf8mb4_unicode_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `category`
+--
+
+CREATE TABLE `category` (
+  `category_id` int(11) NOT NULL AUTO_INCREMENT,
+  `category_name` varchar(255) NOT NULL,
+  PRIMARY KEY (`category_id`),
+  UNIQUE KEY `category_name_UNIQUE` (`category_name`),
+  UNIQUE KEY `category_id_UNIQUE` (`category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `course`
+--
+
+CREATE TABLE `course` (
+  `course_id` int(11) NOT NULL AUTO_INCREMENT,
+  `course_name` varchar(255) NOT NULL,
+  `course_description` longtext,
+  `course_image` longtext,
+  `category_id` int(11) NOT NULL,
+  PRIMARY KEY (`course_id`),
+  UNIQUE KEY `course_id_UNIQUE` (`course_id`),
+  KEY `category_id_idx` (`category_id`),
+  CONSTRAINT `category_id` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `enrollment`
+--
+
+CREATE TABLE `enrollment` (
+  `enrollment_id` int(11) NOT NULL AUTO_INCREMENT,
+  `course_id` int(11) NOT NULL,
+  `user_id` int(11) unsigned NOT NULL,
+  `start_time` datetime NOT NULL,
+  `finish_time` datetime NOT NULL,
+  PRIMARY KEY (`enrollment_id`),
+  UNIQUE KEY `course_id_UNIQUE` (`course_id`),
+  KEY `user_id_idx` (`user_id`),
+  CONSTRAINT `course_id` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `module`
+--
+
+CREATE TABLE `module` (
+  `module_id` int(11) NOT NULL,
+  `module_name` varchar(255) NOT NULL,
+  `module_description` longtext,
+  `module_image` longtext,
+  `course_id` int(11) NOT NULL,
+  PRIMARY KEY (`module_id`),
+  UNIQUE KEY `course_id_UNIQUE` (`course_id`),
+  UNIQUE KEY `module_id_UNIQUE` (`module_id`),
+  CONSTRAINT `course_module_id` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quizchoice`
+--
+
+CREATE TABLE `quizchoice` (
+  `quizchoice_id` int(11) NOT NULL,
+  `choice` varchar(255) NOT NULL,
+  `answer` tinyint(4) NOT NULL,
+  `title_id` int(11) NOT NULL,
+  PRIMARY KEY (`quizchoice_id`),
+  UNIQUE KEY `title_id_UNIQUE` (`title_id`),
+  UNIQUE KEY `quizchoice_id_UNIQUE` (`quizchoice_id`),
+  CONSTRAINT `title_id` FOREIGN KEY (`title_id`) REFERENCES `title` (`title_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `submodule`
+--
+
+CREATE TABLE `submodule` (
+  `submodule_id` int(11) NOT NULL,
+  `submodule_name` varchar(255) NOT NULL,
+  `submodule_description` longtext,
+  `module_id` int(11) NOT NULL,
+  PRIMARY KEY (`submodule_id`),
+  UNIQUE KEY `module_id_UNIQUE` (`module_id`),
+  UNIQUE KEY `submodule_id_UNIQUE` (`submodule_id`),
+  CONSTRAINT `module_id` FOREIGN KEY (`module_id`) REFERENCES `module` (`module_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `title`
+--
+
+CREATE TABLE `title` (
+  `title_id` int(11) NOT NULL,
+  `title_name` varchar(255) NOT NULL,
+  `title_description` longtext,
+  `title_type` enum('QUIZ','CONTENT') NOT NULL,
+  `submodule_id` int(11) NOT NULL,
+  PRIMARY KEY (`title_id`),
+  UNIQUE KEY `submodule_id_UNIQUE` (`submodule_id`),
+  UNIQUE KEY `title_id_UNIQUE` (`title_id`),
+  CONSTRAINT `submodule_id` FOREIGN KEY (`submodule_id`) REFERENCES `submodule` (`submodule_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `titleprogress`
+--
+
+CREATE TABLE `titleprogress` (
+  `titleprogress_id` int(11) NOT NULL,
+  `status` tinyint(4) NOT NULL,
+  `title_id` int(11) NOT NULL,
+  `title_type` enum('QUIZ','CONTENT') NOT NULL,
+  `enrollment_id` int(11) NOT NULL,
+  `start_time` datetime NOT NULL,
+  `finish_time` datetime NOT NULL,
+  `star` int(11) NOT NULL,
+  PRIMARY KEY (`titleprogress_id`),
+  UNIQUE KEY `titleprogress_id_UNIQUE` (`titleprogress_id`),
+  UNIQUE KEY `title_id_UNIQUE` (`title_id`),
+  UNIQUE KEY `enrollment_id_UNIQUE` (`enrollment_id`),
+  CONSTRAINT `enrollment_id` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollment` (`enrollment_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `title_titleprogress_id` FOREIGN KEY (`title_id`) REFERENCES `title` (`title_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 --
 -- Indexes for dumped tables
 --
