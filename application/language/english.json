@@ -1028,5 +1028,12 @@
     "start_course": "Start course",
     "youtube_api_key": "Youtube api key",
     "vimeo_api_key": "Vimeo api key",
-    "back_to_courses": "Back to courses"
+    "back_to_courses": "Back to courses",
+    "modules": "Modules",
+    "submodules": "Submodules",
+    "titles": "Titles",
+    "course_assign": "Course assign",
+    "course": "Course",
+    "create_course": "Create course",
+    "add_course": "Add course"
 }

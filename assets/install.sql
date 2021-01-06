@@ -558,7 +558,15 @@ INSERT INTO `menus` (`id`, `displayed_name`, `route_name`, `parent`, `icon`, `st
 (57, 'school_settings', 'school_settings', 33, NULL, 1, 1, 1, 0, 0, 0, 0, 0, 12, 0, 'school-settings'),
 (58, 'about', 'about', 33, NULL, 1, 1, 0, 0, 0, 0, 0, 0, 51, 0, 'about'),
 (115, 'website_settings', 'website_settings', 33, NULL, 1, 1, 0, 0, 0, 0, 0, 0, 11, 0, 'website-settings'),
-(116, 'noticeboard', 'noticeboard', 28, NULL, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 'noticeboard');
+(116, 'noticeboard', 'noticeboard', 28, NULL, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 'noticeboard'),
+(198, 'courses', null, 0, 'dripicons-document', 1, 1, 1, 1, 0, 0, 0, 0, 31, 0, 'courses'),
+(199, 'courses', null, 198, null, 1, 1, 1, 1, 0, 0, 0, 0, 31, 0, 'courses'),
+(200, 'courses', 'courses', 199, null, 1, 1, 1, 1, 0, 0, 0, 0, 31, 0, 'courses'),
+(201, 'modules', 'modules', 199, null, 1, 1, 1, 1, 0, 0, 0, 0, 31, 0, 'modules'),
+(202, 'submodules', 'submodules', 199, null, 1, 1, 1, 1, 0, 0, 0, 0, 31, 0, 'modules'),
+(203, 'titles', 'titles', 199, null, 1, 1, 1, 1, 0, 0, 0, 0, 31, 0, 'titles'),
+(204, 'course_assign', 'course_assign', 198, null, 1, 1, 1, 1, 0, 0, 0, 0, 31, 0, 'course-assign');
+;
 
 -- --------------------------------------------------------
 

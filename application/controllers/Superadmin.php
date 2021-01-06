@@ -135,6 +135,45 @@ class Superadmin extends CI_Controller {
   //END CLASS_ROOM section
 
   //START SUBJECT section
+  public function courses($param1 = '', $param2 = ''){
+
+    if($param1 == 'create'){
+      $response = $this->crud_model->subject_create();
+      echo $response;
+    }
+
+    if($param1 == 'update'){
+      $response = $this->crud_model->subject_update($param2);
+      echo $response;
+    }
+
+    if($param1 == 'delete'){
+      $response = $this->crud_model->subject_delete($param2);
+      echo $response;
+    }
+
+    if($param1 == 'list'){
+      $page_data['class_id'] = $param2;
+      $this->load->view('backend/superadmin/courses/list', $page_data);
+    }
+
+    if(empty($param1)){
+      $page_data['folder_name'] = 'courses';
+      $page_data['page_title'] = 'courses';
+      $this->load->view('backend/index', $page_data);
+    }
+  }
+
+  public function class_wise_courses($class_id) {
+
+    // PROVIDE A LIST OF SUBJECT ACCORDING TO CLASS ID
+    $page_data['class_id'] = $class_id;
+    $this->load->view('backend/superadmin/courses/dropdown', $page_data);
+  }
+
+  //END COURSE section
+
+  //START SUBJECT section
   public function subject($param1 = '', $param2 = ''){
 
     if($param1 == 'create'){
