@@ -4,8 +4,8 @@
     <div class="card">
       <div class="card-body">
         <h4 class="page-title">
-        <i class="mdi mdi-view-dashboard title_icon"></i> <?php echo get_phrase('courses'); ?>
-          <button type="button" class="btn btn-outline-primary btn-rounded alignToTitle" onclick="rightModal('<?php echo site_url('modal/popup/courses/create'); ?>', '<?php echo get_phrase('create_course'); ?>')"> <i class="mdi mdi-plus"></i> <?php echo get_phrase('add_course'); ?></button>
+        <i class="mdi mdi-view-dashboard title_icon"></i> <?php echo get_phrase('course_assign'); ?>
+          <button type="button" class="btn btn-outline-primary btn-rounded alignToTitle" onclick="rightModal('<?php echo site_url('modal/popup/course_assign/create'); ?>', '<?php echo get_phrase('create_course'); ?>')"> <i class="mdi mdi-plus"></i> <?php echo get_phrase('assign_course'); ?></button>
         </h4>
       </div> <!-- end card body-->
     </div> <!-- end card -->

@@ -560,10 +560,11 @@ INSERT INTO `menus` (`id`, `displayed_name`, `route_name`, `parent`, `icon`, `st
 (115, 'website_settings', 'website_settings', 33, NULL, 1, 1, 0, 0, 0, 0, 0, 0, 11, 0, 'website-settings'),
 (116, 'noticeboard', 'noticeboard', 28, NULL, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 'noticeboard'),
 (198, 'courses', null, 0, 'dripicons-document', 1, 1, 1, 1, 0, 0, 0, 0, 31, 0, 'courses'),
+(197, 'categories', 'categories', 198, NULL, 1, 1, 1, 1, 0, 0, 0, 0, 31, 0, 'categories'),
 (199, 'courses', null, 198, null, 1, 1, 1, 1, 0, 0, 0, 0, 31, 0, 'courses'),
 (200, 'courses', 'courses', 199, null, 1, 1, 1, 1, 0, 0, 0, 0, 31, 0, 'courses'),
 (201, 'modules', 'modules', 199, null, 1, 1, 1, 1, 0, 0, 0, 0, 31, 0, 'modules'),
-(202, 'submodules', 'submodules', 199, null, 1, 1, 1, 1, 0, 0, 0, 0, 31, 0, 'modules'),
+(202, 'sub_modules', 'sub_modules', 199, null, 1, 1, 1, 1, 0, 0, 0, 0, 31, 0, 'sub-modules'),
 (203, 'titles', 'titles', 199, null, 1, 1, 1, 1, 0, 0, 0, 0, 31, 0, 'titles'),
 (204, 'course_assign', 'course_assign', 198, null, 1, 1, 1, 1, 0, 0, 0, 0, 31, 0, 'course-assign');
 ;
@@ -908,22 +909,6 @@ CREATE TABLE `module` (
 
 -- --------------------------------------------------------
 
---
--- Table structure for table `quizchoice`
---
-
-CREATE TABLE `quizchoice` (
-  `quizchoice_id` int(11) NOT NULL,
-  `choice` varchar(255) NOT NULL,
-  `answer` tinyint(4) NOT NULL,
-  `title_id` int(11) NOT NULL,
-  PRIMARY KEY (`quizchoice_id`),
-  UNIQUE KEY `title_id_UNIQUE` (`title_id`),
-  UNIQUE KEY `quizchoice_id_UNIQUE` (`quizchoice_id`),
-  CONSTRAINT `title_id` FOREIGN KEY (`title_id`) REFERENCES `title` (`title_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `submodule`
@@ -981,6 +966,22 @@ CREATE TABLE `titleprogress` (
   CONSTRAINT `title_titleprogress_id` FOREIGN KEY (`title_id`) REFERENCES `title` (`title_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 --
+--
+-- Table structure for table `quizchoice`
+--
+
+CREATE TABLE `quizchoice` (
+  `quizchoice_id` int(11) NOT NULL,
+  `choice` varchar(255) NOT NULL,
+  `answer` tinyint(4) NOT NULL,
+  `title_id` int(11) NOT NULL,
+  PRIMARY KEY (`quizchoice_id`),
+  UNIQUE KEY `title_id_UNIQUE` (`title_id`),
+  UNIQUE KEY `quizchoice_id_UNIQUE` (`quizchoice_id`),
+  CONSTRAINT `title_id` FOREIGN KEY (`title_id`) REFERENCES `title` (`title_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
 -- Indexes for dumped tables
 --
 
