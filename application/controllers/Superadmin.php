@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
 *  @author   : Creativeitem
@@ -9,8 +9,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 *  http://support.creativeitem.com
 */
 
-class Superadmin extends CI_Controller {
-  public function __construct(){
+class Superadmin extends CI_Controller
+{
+  public function __construct()
+  {
 
     parent::__construct();
 
@@ -39,16 +41,18 @@ class Superadmin extends CI_Controller {
     /*LOAD EXTERNAL LIBRARIES*/
     $this->load->library('pdf');
 
-    if($this->session->userdata('superadmin_login') != 1){
+    if ($this->session->userdata('superadmin_login') != 1) {
       redirect(site_url('login'), 'refresh');
     }
   }
   //dashboard
-  public function index(){
+  public function index()
+  {
     redirect(route('dashboard'), 'refresh');
   }
 
-  public function dashboard(){
+  public function dashboard()
+  {
 
     // $this->msg91_model->clickatell();
     $page_data['page_title'] = 'Dashboard';
@@ -57,24 +61,25 @@ class Superadmin extends CI_Controller {
   }
 
   //START CLASS secion
-  public function manage_class($param1 = '', $param2 = '', $param3 = ''){
+  public function manage_class($param1 = '', $param2 = '', $param3 = '')
+  {
 
-    if($param1 == 'create'){
+    if ($param1 == 'create') {
       $response = $this->crud_model->class_create();
       echo $response;
     }
 
-    if($param1 == 'delete'){
+    if ($param1 == 'delete') {
       $response = $this->crud_model->class_delete($param2);
       echo $response;
     }
 
-    if($param1 == 'update'){
+    if ($param1 == 'update') {
       $response = $this->crud_model->class_update($param2);
       echo $response;
     }
 
-    if($param1 == 'section'){
+    if ($param1 == 'section') {
       $response = $this->crud_model->section_update($param2);
       echo $response;
     }
@@ -84,7 +89,7 @@ class Superadmin extends CI_Controller {
       $this->load->view('backend/superadmin/class/list');
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'class';
       $page_data['page_title'] = 'class';
       $this->load->view('backend/index', $page_data);
@@ -93,7 +98,8 @@ class Superadmin extends CI_Controller {
   //END CLASS section
 
   //	SECTION STARTED
-  public function section($action = "", $id = "") {
+  public function section($action = "", $id = "")
+  {
 
     // PROVIDE A LIST OF SECTION ACCORDING TO CLASS ID
     if ($action == 'list') {
@@ -104,19 +110,20 @@ class Superadmin extends CI_Controller {
   //	SECTION ENDED
 
   //START CLASS_ROOM section
-  public function class_room($param1 = '', $param2 = ''){
+  public function class_room($param1 = '', $param2 = '')
+  {
 
-    if($param1 == 'create'){
+    if ($param1 == 'create') {
       $response = $this->crud_model->class_room_create();
       echo $response;
     }
 
-    if($param1 == 'update'){
+    if ($param1 == 'update') {
       $response = $this->crud_model->class_room_update($param2);
       echo $response;
     }
 
-    if($param1 == 'delete'){
+    if ($param1 == 'delete') {
       $response = $this->crud_model->class_room_delete($param2);
       echo $response;
     }
@@ -126,7 +133,7 @@ class Superadmin extends CI_Controller {
       $this->load->view('backend/superadmin/class_room/list');
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'class_room';
       $page_data['page_title'] = 'class_room';
       $this->load->view('backend/index', $page_data);
@@ -134,37 +141,272 @@ class Superadmin extends CI_Controller {
   }
   //END CLASS_ROOM section
 
-  //START SUBJECT section
-  public function subject($param1 = '', $param2 = ''){
+  //START categories section
+  public function categories($param1 = '', $param2 = '')
+  {
 
-    if($param1 == 'create'){
+    if ($param1 == 'create') {
+      $response = $this->crud_model->categories_create();
+      echo $response;
+    }
+
+    if ($param1 == 'update') {
+      $response = $this->crud_model->categories_update($param2);
+      echo $response;
+    }
+
+    if ($param1 == 'delete') {
+      $response = $this->crud_model->categories_delete($param2);
+      echo $response;
+    }
+
+    // PROVIDE A LIST OF SECTION ACCORDING TO CLASS ID
+    if ($param1 == 'list') {
+      $this->load->view('backend/superadmin/categories/list');
+    }
+
+    if (empty($param1)) {
+      $page_data['folder_name'] = 'categories';
+      $page_data['page_title'] = 'categories';
+      $this->load->view('backend/index', $page_data);
+    }
+  }
+  //END categories section
+
+  //START COURSE section
+  public function courses($param1 = '', $param2 = '')
+  {
+
+    if ($param1 == 'create') {
       $response = $this->crud_model->subject_create();
       echo $response;
     }
 
-    if($param1 == 'update'){
+    if ($param1 == 'update') {
       $response = $this->crud_model->subject_update($param2);
       echo $response;
     }
 
-    if($param1 == 'delete'){
+    if ($param1 == 'delete') {
       $response = $this->crud_model->subject_delete($param2);
       echo $response;
     }
 
-    if($param1 == 'list'){
+    if ($param1 == 'list') {
+      $page_data['class_id'] = $param2;
+      $this->load->view('backend/superadmin/courses/list', $page_data);
+    }
+
+    if (empty($param1)) {
+      $page_data['folder_name'] = 'courses';
+      $page_data['page_title'] = 'courses';
+      $this->load->view('backend/index', $page_data);
+    }
+  }
+
+  public function class_wise_courses($class_id)
+  {
+
+    // PROVIDE A LIST OF SUBJECT ACCORDING TO CLASS ID
+    $page_data['class_id'] = $class_id;
+    $this->load->view('backend/superadmin/courses/dropdown', $page_data);
+  }
+
+  //END COURSE section
+
+
+  //START modules section
+  public function modules($param1 = '', $param2 = '')
+  {
+
+    if ($param1 == 'create') {
+      $response = $this->crud_model->subject_create();
+      echo $response;
+    }
+
+    if ($param1 == 'update') {
+      $response = $this->crud_model->subject_update($param2);
+      echo $response;
+    }
+
+    if ($param1 == 'delete') {
+      $response = $this->crud_model->subject_delete($param2);
+      echo $response;
+    }
+
+    if ($param1 == 'list') {
+      $page_data['class_id'] = $param2;
+      $this->load->view('backend/superadmin/modules/list', $page_data);
+    }
+
+    if (empty($param1)) {
+      $page_data['folder_name'] = 'modules';
+      $page_data['page_title'] = 'modules';
+      $this->load->view('backend/index', $page_data);
+    }
+  }
+
+  public function class_wise_modules($class_id)
+  {
+
+    // PROVIDE A LIST OF SUBJECT ACCORDING TO CLASS ID
+    $page_data['class_id'] = $class_id;
+    $this->load->view('backend/superadmin/modules/dropdown', $page_data);
+  }
+
+  //END modules section
+
+  //START sub_modules section
+  public function sub_modules($param1 = '', $param2 = '')
+  {
+
+    if ($param1 == 'create') {
+      $response = $this->crud_model->subject_create();
+      echo $response;
+    }
+
+    if ($param1 == 'update') {
+      $response = $this->crud_model->subject_update($param2);
+      echo $response;
+    }
+
+    if ($param1 == 'delete') {
+      $response = $this->crud_model->subject_delete($param2);
+      echo $response;
+    }
+
+    if ($param1 == 'list') {
+      $page_data['class_id'] = $param2;
+      $this->load->view('backend/superadmin/sub_modules/list', $page_data);
+    }
+
+    if (empty($param1)) {
+      $page_data['folder_name'] = 'sub_modules';
+      $page_data['page_title'] = 'sub_modules';
+      $this->load->view('backend/index', $page_data);
+    }
+  }
+
+  public function class_wise_sub_modules($class_id)
+  {
+
+    // PROVIDE A LIST OF SUBJECT ACCORDING TO CLASS ID
+    $page_data['class_id'] = $class_id;
+    $this->load->view('backend/superadmin/sub_modules/dropdown', $page_data);
+  }
+
+  //END sub_modules section
+
+      //START titles section
+      public function titles($param1 = '', $param2 = ''){
+
+        if($param1 == 'create'){
+          $response = $this->crud_model->subject_create();
+          echo $response;
+        }
+    
+        if($param1 == 'update'){
+          $response = $this->crud_model->subject_update($param2);
+          echo $response;
+        }
+    
+        if($param1 == 'delete'){
+          $response = $this->crud_model->subject_delete($param2);
+          echo $response;
+        }
+    
+        if($param1 == 'list'){
+          $page_data['class_id'] = $param2;
+          $this->load->view('backend/superadmin/titles/list', $page_data);
+        }
+    
+        if(empty($param1)){
+          $page_data['folder_name'] = 'titles';
+          $page_data['page_title'] = 'titles';
+          $this->load->view('backend/index', $page_data);
+        }
+      }
+    
+      public function class_wise_titles($class_id) {
+    
+        // PROVIDE A LIST OF SUBJECT ACCORDING TO CLASS ID
+        $page_data['class_id'] = $class_id;
+        $this->load->view('backend/superadmin/titles/dropdown', $page_data);
+      }
+    
+      //END titles section
+    
+      //START course_assign section
+      public function course_assign($param1 = '', $param2 = ''){
+
+        if($param1 == 'create'){
+          $response = $this->crud_model->subject_create();
+          echo $response;
+        }
+    
+        if($param1 == 'update'){
+          $response = $this->crud_model->subject_update($param2);
+          echo $response;
+        }
+    
+        if($param1 == 'delete'){
+          $response = $this->crud_model->subject_delete($param2);
+          echo $response;
+        }
+    
+        if($param1 == 'list'){
+          $page_data['class_id'] = $param2;
+          $this->load->view('backend/superadmin/course_assign/list', $page_data);
+        }
+    
+        if(empty($param1)){
+          $page_data['folder_name'] = 'course_assign';
+          $page_data['page_title'] = 'course_assign';
+          $this->load->view('backend/index', $page_data);
+        }
+      }
+    
+      public function class_wise_course_assign($class_id) {
+    
+        // PROVIDE A LIST OF SUBJECT ACCORDING TO CLASS ID
+        $page_data['class_id'] = $class_id;
+        $this->load->view('backend/superadmin/course_assign/dropdown', $page_data);
+      }
+    
+      //END course_assign section
+  //START SUBJECT section
+  public function subject($param1 = '', $param2 = '')
+  {
+
+    if ($param1 == 'create') {
+      $response = $this->crud_model->subject_create();
+      echo $response;
+    }
+
+    if ($param1 == 'update') {
+      $response = $this->crud_model->subject_update($param2);
+      echo $response;
+    }
+
+    if ($param1 == 'delete') {
+      $response = $this->crud_model->subject_delete($param2);
+      echo $response;
+    }
+
+    if ($param1 == 'list') {
       $page_data['class_id'] = $param2;
       $this->load->view('backend/superadmin/subject/list', $page_data);
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'subject';
       $page_data['page_title'] = 'subject';
       $this->load->view('backend/index', $page_data);
     }
   }
 
-  public function class_wise_subject($class_id) {
+  public function class_wise_subject($class_id)
+  {
 
     // PROVIDE A LIST OF SUBJECT ACCORDING TO CLASS ID
     $page_data['class_id'] = $class_id;
@@ -174,29 +416,30 @@ class Superadmin extends CI_Controller {
 
 
   //START DEPARTMENT section
-  public function department($param1 = '', $param2 = ''){
+  public function department($param1 = '', $param2 = '')
+  {
 
-    if($param1 == 'create'){
+    if ($param1 == 'create') {
       $response = $this->crud_model->department_create();
       echo $response;
     }
 
-    if($param1 == 'update'){
+    if ($param1 == 'update') {
       $response = $this->crud_model->department_update($param2);
       echo $response;
     }
 
-    if($param1 == 'delete'){
+    if ($param1 == 'delete') {
       $response = $this->crud_model->department_delete($param2);
       echo $response;
     }
 
     // Get the data from database
-    if($param1 == 'list'){
+    if ($param1 == 'list') {
       $this->load->view('backend/superadmin/department/list');
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'department';
       $page_data['page_title'] = 'department';
       $this->load->view('backend/index', $page_data);
@@ -206,25 +449,26 @@ class Superadmin extends CI_Controller {
 
 
   //START SYLLABUS section
-  public function syllabus($param1 = '', $param2 = '', $param3 = ''){
+  public function syllabus($param1 = '', $param2 = '', $param3 = '')
+  {
 
-    if($param1 == 'create'){
+    if ($param1 == 'create') {
       $response = $this->crud_model->syllabus_create();
       echo $response;
     }
 
-    if($param1 == 'delete'){
+    if ($param1 == 'delete') {
       $response = $this->crud_model->syllabus_delete($param2);
       echo $response;
     }
 
-    if($param1 == 'list'){
+    if ($param1 == 'list') {
       $page_data['class_id'] = $param2;
       $page_data['section_id'] = $param3;
       $this->load->view('backend/superadmin/syllabus/list', $page_data);
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'syllabus';
       $page_data['page_title'] = 'syllabus';
       $this->load->view('backend/index', $page_data);
@@ -233,18 +477,19 @@ class Superadmin extends CI_Controller {
   //END SYLLABUS section
 
   // START ADMIN SECTION
-  public function admin($param1 = "", $param2 = "", $param3 = "") {
-    if($param1 == 'create'){
+  public function admin($param1 = "", $param2 = "", $param3 = "")
+  {
+    if ($param1 == 'create') {
       $response = $this->user_model->create_admin();
       echo $response;
     }
 
-    if($param1 == 'update'){
+    if ($param1 == 'update') {
       $response = $this->user_model->update_admin($param2);
       echo $response;
     }
 
-    if($param1 == 'delete'){
+    if ($param1 == 'delete') {
       $response = $this->user_model->delete_admin($param2);
       echo $response;
     }
@@ -253,7 +498,7 @@ class Superadmin extends CI_Controller {
       $this->load->view('backend/superadmin/admin/list');
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'admin';
       $page_data['page_title'] = 'admins';
       $this->load->view('backend/index', $page_data);
@@ -263,20 +508,21 @@ class Superadmin extends CI_Controller {
 
 
   //START TEACHER section
-  public function teacher($param1 = '', $param2 = '', $param3 = ''){
+  public function teacher($param1 = '', $param2 = '', $param3 = '')
+  {
 
 
-    if($param1 == 'create'){
+    if ($param1 == 'create') {
       $response = $this->user_model->create_teacher();
       echo $response;
     }
 
-    if($param1 == 'update'){
+    if ($param1 == 'update') {
       $response = $this->user_model->update_teacher($param2);
       echo $response;
     }
 
-    if($param1 == 'delete'){
+    if ($param1 == 'delete') {
       $teacher_id = $this->db->get_where('teachers', array('user_id' => $param2))->row('id');
       $response = $this->user_model->delete_teacher($param2, $teacher_id);
       echo $response;
@@ -286,7 +532,7 @@ class Superadmin extends CI_Controller {
       $this->load->view('backend/superadmin/teacher/list');
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'teacher';
       $page_data['page_title'] = 'techers';
       $this->load->view('backend/index', $page_data);
@@ -297,22 +543,23 @@ class Superadmin extends CI_Controller {
 
 
   //START TEACHER PERMISSION section
-  public function permission($param1 = '', $param2 = '', $param3 = ''){
+  public function permission($param1 = '', $param2 = '', $param3 = '')
+  {
 
-    if($param1 == 'filter'){
+    if ($param1 == 'filter') {
       $page_data['class_id'] = $param2;
       $page_data['section_id'] = $param3;
       $this->load->view('backend/superadmin/permission/list', $page_data);
     }
 
-    if($param1 == 'modify_permission'){
+    if ($param1 == 'modify_permission') {
       $page_data['class_id'] = $this->input->post('class_id');
       $page_data['section_id'] = $this->input->post('section_id');
       $this->user_model->teacher_permission();
       $this->load->view('backend/superadmin/permission/list', $page_data);
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'permission';
       $page_data['page_title'] = 'teacher_permissions';
       $this->load->view('backend/index', $page_data);
@@ -322,19 +569,20 @@ class Superadmin extends CI_Controller {
 
 
   //START PARENT section
-  public function parent($param1 = '', $param2 = ''){
+  public function parent($param1 = '', $param2 = '')
+  {
 
-    if($param1 == 'create'){
+    if ($param1 == 'create') {
       $response = $this->user_model->parent_create();
       echo $response;
     }
 
-    if($param1 == 'update'){
+    if ($param1 == 'update') {
       $response = $this->user_model->parent_update($param2);
       echo $response;
     }
 
-    if($param1 == 'delete'){
+    if ($param1 == 'delete') {
       $response = $this->user_model->parent_delete($param2);
       echo $response;
     }
@@ -344,7 +592,7 @@ class Superadmin extends CI_Controller {
       $this->load->view('backend/superadmin/parent/list');
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'parent';
       $page_data['page_title'] = 'parent';
       $this->load->view('backend/index', $page_data);
@@ -354,19 +602,20 @@ class Superadmin extends CI_Controller {
 
 
   //START ACCOUNTANT section
-  public function accountant($param1 = '', $param2 = ''){
+  public function accountant($param1 = '', $param2 = '')
+  {
 
-    if($param1 == 'create'){
+    if ($param1 == 'create') {
       $response = $this->user_model->accountant_create();
       echo $response;
     }
 
-    if($param1 == 'update'){
+    if ($param1 == 'update') {
       $response = $this->user_model->accountant_update($param2);
       echo $response;
     }
 
-    if($param1 == 'delete'){
+    if ($param1 == 'delete') {
       $response = $this->user_model->accountant_delete($param2);
       echo $response;
     }
@@ -376,7 +625,7 @@ class Superadmin extends CI_Controller {
       $this->load->view('backend/superadmin/accountant/list');
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'accountant';
       $page_data['page_title'] = 'accountant';
       $this->load->view('backend/index', $page_data);
@@ -386,19 +635,20 @@ class Superadmin extends CI_Controller {
 
 
   //START LIBRARIAN section
-  public function librarian($param1 = '', $param2 = ''){
+  public function librarian($param1 = '', $param2 = '')
+  {
 
-    if($param1 == 'create'){
+    if ($param1 == 'create') {
       $response = $this->user_model->librarian_create();
       echo $response;
     }
 
-    if($param1 == 'update'){
+    if ($param1 == 'update') {
       $response = $this->user_model->librarian_update($param2);
       echo $response;
     }
 
-    if($param1 == 'delete'){
+    if ($param1 == 'delete') {
       $response = $this->user_model->librarian_delete($param2);
       echo $response;
     }
@@ -408,7 +658,7 @@ class Superadmin extends CI_Controller {
       $this->load->view('backend/superadmin/librarian/list');
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'librarian';
       $page_data['page_title'] = 'librarian';
       $this->load->view('backend/index', $page_data);
@@ -417,30 +667,31 @@ class Superadmin extends CI_Controller {
   //END LIBRARIAN section
 
   //START CLASS ROUTINE section
-  public function routine($param1 = '', $param2 = '', $param3 = '', $param4 = ''){
+  public function routine($param1 = '', $param2 = '', $param3 = '', $param4 = '')
+  {
 
-    if($param1 == 'create'){
+    if ($param1 == 'create') {
       $response = $this->crud_model->routine_create();
       echo $response;
     }
 
-    if($param1 == 'update'){
+    if ($param1 == 'update') {
       $response = $this->crud_model->routine_update($param2);
       echo $response;
     }
 
-    if($param1 == 'delete'){
+    if ($param1 == 'delete') {
       $response = $this->crud_model->routine_delete($param2);
       echo $response;
     }
 
-    if($param1 == 'filter'){
+    if ($param1 == 'filter') {
       $page_data['class_id'] = $param2;
       $page_data['section_id'] = $param3;
       $this->load->view('backend/superadmin/routine/list', $page_data);
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'routine';
       $page_data['page_title'] = 'routine';
       $this->load->view('backend/index', $page_data);
@@ -450,15 +701,16 @@ class Superadmin extends CI_Controller {
 
 
   //START DAILY ATTENDANCE section
-  public function attendance($param1 = '', $param2 = '', $param3 = ''){
+  public function attendance($param1 = '', $param2 = '', $param3 = '')
+  {
 
-    if($param1 == 'take_attendance'){
+    if ($param1 == 'take_attendance') {
       $response = $this->crud_model->take_attendance();
       echo $response;
     }
 
-    if($param1 == 'filter'){
-      $date = '01 '.$this->input->post('month').' '.$this->input->post('year');
+    if ($param1 == 'filter') {
+      $date = '01 ' . $this->input->post('month') . ' ' . $this->input->post('year');
       $page_data['attendance_date'] = strtotime($date);
       $page_data['class_id'] = $this->input->post('class_id');
       $page_data['section_id'] = $this->input->post('section_id');
@@ -467,14 +719,14 @@ class Superadmin extends CI_Controller {
       $this->load->view('backend/superadmin/attendance/list', $page_data);
     }
 
-    if($param1 == 'student'){
+    if ($param1 == 'student') {
       $page_data['attendance_date'] = strtotime($this->input->post('date'));
       $page_data['class_id'] = $this->input->post('class_id');
       $page_data['section_id'] = $this->input->post('section_id');
       $this->load->view('backend/superadmin/attendance/student', $page_data);
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'attendance';
       $page_data['page_title'] = 'attendance';
       $this->load->view('backend/index', $page_data);
@@ -484,24 +736,25 @@ class Superadmin extends CI_Controller {
 
 
   //START EVENT CALENDAR section
-  public function event_calendar($param1 = '', $param2 = ''){
+  public function event_calendar($param1 = '', $param2 = '')
+  {
 
-    if($param1 == 'create'){
+    if ($param1 == 'create') {
       $response = $this->crud_model->event_calendar_create();
       echo $response;
     }
 
-    if($param1 == 'update'){
+    if ($param1 == 'update') {
       $response = $this->crud_model->event_calendar_update($param2);
       echo $response;
     }
 
-    if($param1 == 'delete'){
+    if ($param1 == 'delete') {
       $response = $this->crud_model->event_calendar_delete($param2);
       echo $response;
     }
 
-    if($param1 == 'all_events'){
+    if ($param1 == 'all_events') {
       echo $this->crud_model->all_events();
     }
 
@@ -509,7 +762,7 @@ class Superadmin extends CI_Controller {
       $this->load->view('backend/superadmin/event_calendar/list');
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'event_calendar';
       $page_data['page_title'] = 'event_calendar';
       $this->load->view('backend/index', $page_data);
@@ -520,23 +773,24 @@ class Superadmin extends CI_Controller {
 
 
   //START STUDENT ADN ADMISSION section
-  public function student($param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = ''){
+  public function student($param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
+  {
 
-    if($param1 == 'create'){
+    if ($param1 == 'create') {
       //form view
-      if($param2 == 'bulk'){
+      if ($param2 == 'bulk') {
         $page_data['aria_expand'] = 'bulk';
         $page_data['working_page'] = 'create';
         $page_data['folder_name'] = 'student';
         $page_data['page_title'] = 'add_student';
         $this->load->view('backend/index', $page_data);
-      }elseif($param2 == 'excel'){
+      } elseif ($param2 == 'excel') {
         $page_data['aria_expand'] = 'excel';
         $page_data['working_page'] = 'create';
         $page_data['folder_name'] = 'student';
         $page_data['page_title'] = 'add_student';
         $this->load->view('backend/index', $page_data);
-      }else{
+      } else {
         $page_data['aria_expand'] = 'single';
         $page_data['working_page'] = 'create';
         $page_data['folder_name'] = 'student';
@@ -546,23 +800,23 @@ class Superadmin extends CI_Controller {
     }
 
     //create to database
-    if($param1 == 'create_single_student'){
+    if ($param1 == 'create_single_student') {
       $response = $this->user_model->single_student_create();
       echo $response;
     }
 
-    if($param1 == 'create_bulk_student'){
+    if ($param1 == 'create_bulk_student') {
       $response = $this->user_model->bulk_student_create();
       echo $response;
     }
 
-    if($param1 == 'create_excel'){
+    if ($param1 == 'create_excel') {
       $response = $this->user_model->excel_create();
       echo $response;
     }
 
     // form view
-    if($param1 == 'edit'){
+    if ($param1 == 'edit') {
       $page_data['student_id'] = $param2;
       $page_data['working_page'] = 'edit';
       $page_data['folder_name'] = 'student';
@@ -571,12 +825,12 @@ class Superadmin extends CI_Controller {
     }
 
     //updated to database
-    if($param1 == 'updated'){
+    if ($param1 == 'updated') {
       $response = $this->user_model->student_update($param2, $param3);
       echo $response;
     }
     //updated to database
-    if($param1 == 'id_card'){
+    if ($param1 == 'id_card') {
       $page_data['student_id'] = $param2;
       $page_data['folder_name'] = 'student';
       $page_data['page_title'] = 'identity_card';
@@ -584,18 +838,18 @@ class Superadmin extends CI_Controller {
       $this->load->view('backend/index', $page_data);
     }
 
-    if($param1 == 'delete'){
+    if ($param1 == 'delete') {
       $response = $this->user_model->delete_student($param2, $param3);
       echo $response;
     }
 
-    if($param1 == 'filter'){
+    if ($param1 == 'filter') {
       $page_data['class_id'] = $param2;
       $page_data['section_id'] = $param3;
       $this->load->view('backend/superadmin/student/list', $page_data);
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['working_page'] = 'filter';
       $page_data['folder_name'] = 'student';
       $page_data['page_title'] = 'student_list';
@@ -606,19 +860,20 @@ class Superadmin extends CI_Controller {
 
 
   //START EXAM section
-  public function exam($param1 = '', $param2 = ''){
+  public function exam($param1 = '', $param2 = '')
+  {
 
-    if($param1 == 'create'){
+    if ($param1 == 'create') {
       $response = $this->crud_model->exam_create();
       echo $response;
     }
 
-    if($param1 == 'update'){
+    if ($param1 == 'update') {
       $response = $this->crud_model->exam_update($param2);
       echo $response;
     }
 
-    if($param1 == 'delete'){
+    if ($param1 == 'delete') {
       $response = $this->crud_model->exam_delete($param2);
       echo $response;
     }
@@ -627,7 +882,7 @@ class Superadmin extends CI_Controller {
       $this->load->view('backend/superadmin/exam/list');
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'exam';
       $page_data['page_title'] = 'exam';
       $this->load->view('backend/index', $page_data);
@@ -636,9 +891,10 @@ class Superadmin extends CI_Controller {
   //END EXAM section
 
   //START MARKS section
-  public function mark($param1 = '', $param2 = ''){
+  public function mark($param1 = '', $param2 = '')
+  {
 
-    if($param1 == 'list'){
+    if ($param1 == 'list') {
       $page_data['class_id'] = $this->input->post('class_id');
       $page_data['section_id'] = $this->input->post('section_id');
       $page_data['subject_id'] = $this->input->post('subject');
@@ -647,11 +903,11 @@ class Superadmin extends CI_Controller {
       $this->load->view('backend/superadmin/mark/list', $page_data);
     }
 
-    if($param1 == 'mark_update'){
+    if ($param1 == 'mark_update') {
       $this->crud_model->mark_update();
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'mark';
       $page_data['page_title'] = 'marks';
       $this->load->view('backend/index', $page_data);
@@ -659,28 +915,30 @@ class Superadmin extends CI_Controller {
   }
 
   // GET THE GRADE ACCORDING TO MARK
-  public function get_grade($acquired_mark) {
+  public function get_grade($acquired_mark)
+  {
     echo get_grade($acquired_mark);
   }
   //END MARKS sesction
 
   // GRADE SECTION STARTS
-  public function grade($param1 = "", $param2 = "") {
+  public function grade($param1 = "", $param2 = "")
+  {
 
     // store data on database
-    if($param1 == 'create'){
+    if ($param1 == 'create') {
       $response = $this->crud_model->grade_create();
       echo $response;
     }
 
     // update data on database
-    if($param1 == 'update'){
+    if ($param1 == 'update') {
       $response = $this->crud_model->grade_update($param2);
       echo $response;
     }
 
     // delelte data from database
-    if($param1 == 'delete'){
+    if ($param1 == 'delete') {
       $response = $this->crud_model->grade_delete($param2);
       echo $response;
     }
@@ -691,7 +949,7 @@ class Superadmin extends CI_Controller {
     }
 
     // showing the index file
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'grade';
       $page_data['page_title'] = 'grades';
       $this->load->view('backend/index', $page_data);
@@ -700,7 +958,8 @@ class Superadmin extends CI_Controller {
   // GRADE SECTION ENDS
 
   // STUDENT PROMOTION SECTION STARTS
-  function promotion($param1 = "", $promotion_data = "") {
+  function promotion($param1 = "", $promotion_data = "")
+  {
 
     // Promote students. Here promotion_data contains all the data of a student to promote
     if ($param1 == 'promote') {
@@ -721,7 +980,7 @@ class Superadmin extends CI_Controller {
       $this->load->view('backend/superadmin/promotion/list', $page_data);
     }
     // showing the index file
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'promotion';
       $page_data['page_title'] = 'student_promotion';
       $this->load->view('backend/index', $page_data);
@@ -730,7 +989,8 @@ class Superadmin extends CI_Controller {
   // STUDENT PROMOTION SECTION ENDS
 
   // ACCOUNTING SECTION STARTS
-  public function invoice($param1 = "", $param2 = "") {
+  public function invoice($param1 = "", $param2 = "")
+  {
     // For creating new invoice
     if ($param1 == 'single') {
       $response = $this->crud_model->create_single_invoice();
@@ -773,18 +1033,18 @@ class Superadmin extends CI_Controller {
     // showing the list of invoices
     if ($param1 == 'list') {
       $date = explode('-', $this->input->get('date'));
-      $page_data['date_from'] = strtotime($date[0].' 00:00:00');
-      $page_data['date_to']   = strtotime($date[1].' 23:59:59');
+      $page_data['date_from'] = strtotime($date[0] . ' 00:00:00');
+      $page_data['date_to']   = strtotime($date[1] . ' 23:59:59');
       $page_data['selected_class'] = $this->input->get('selectedClass');
       $page_data['selected_status'] = $this->input->get('selectedStatus');
       $this->load->view('backend/superadmin/invoice/list', $page_data);
     }
     // showing the index file
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'invoice';
       $page_data['page_title']  = 'invoice';
-      $first_day_of_month = "1 ".date("M")." ".date("Y").' 00:00:00';
-      $last_day_of_month = date("t")." ".date("M")." ".date("Y").' 23:59:59';
+      $first_day_of_month = "1 " . date("M") . " " . date("Y") . ' 00:00:00';
+      $last_day_of_month = date("t") . " " . date("M") . " " . date("Y") . ' 23:59:59';
       $page_data['date_from']   = strtotime($first_day_of_month);
       $page_data['date_to']     = strtotime($last_day_of_month);
       $page_data['selected_class'] = 'all';
@@ -794,52 +1054,53 @@ class Superadmin extends CI_Controller {
   }
 
   //EXPORT STUDENT FEES
-  public function export($param1 = "", $date_from = "", $date_to = "", $selected_class = "", $selected_status = "") {
+  public function export($param1 = "", $date_from = "", $date_to = "", $selected_class = "", $selected_status = "")
+  {
     //RETURN EXPORT URL
     if ($param1 == 'url') {
       $type = $this->input->post('type');
       $date = explode('-', $this->input->post('dateRange'));
-      $date_from = strtotime($date[0].' 00:00:00');
-      $date_to   = strtotime($date[1].' 23:59:59');
+      $date_from = strtotime($date[0] . ' 00:00:00');
+      $date_to   = strtotime($date[1] . ' 23:59:59');
       $selected_class = $this->input->post('selectedClass');
       $selected_status = $this->input->post('selectedStatus');
-      echo route('export/'.$type.'/'.$date_from.'/'.$date_to.'/'.$selected_class.'/'.$selected_status);
+      echo route('export/' . $type . '/' . $date_from . '/' . $date_to . '/' . $selected_class . '/' . $selected_status);
     }
     // EXPORT AS PDF
-    if($param1 == 'pdf' || $param1 == 'print') {
+    if ($param1 == 'pdf' || $param1 == 'print') {
       $page_data['action']   = $param1;
       $page_data['date_from']   = $date_from;
       $page_data['date_to']     = $date_to;
       $page_data['selected_class'] = $selected_class;
       $page_data['selected_status'] = $selected_status;
-      $html = $this->load->view('backend/superadmin/invoice/export',$page_data, true);
+      $html = $this->load->view('backend/superadmin/invoice/export', $page_data, true);
 
       $this->pdf->loadHtml($html);
-      $this->pdf->set_paper("a4", "landscape" );
+      $this->pdf->set_paper("a4", "landscape");
       $this->pdf->render();
 
       // FILE DOWNLOADING CODES
       if ($selected_status == 'all') {
         $paymentStatusForTitle = 'paid-and-unpaid';
-      }else{
+      } else {
         $paymentStatusForTitle = $selected_status;
       }
       if ($selected_class == 'all') {
         $classNameForTitle = 'all_class';
-      }else{
+      } else {
         $class_details = $this->crud_model->get_classes($selected_class)->row_array();
         $classNameForTitle = $class_details['name'];
       }
-      $fileName = 'Student_fees-'.date('d-M-Y', $date_from).'-to-'.date('d-M-Y', $date_to).'-'.$classNameForTitle.'-'.$paymentStatusForTitle.'.pdf';
+      $fileName = 'Student_fees-' . date('d-M-Y', $date_from) . '-to-' . date('d-M-Y', $date_to) . '-' . $classNameForTitle . '-' . $paymentStatusForTitle . '.pdf';
 
       if ($param1 == 'pdf') {
         $this->pdf->stream($fileName, array("Attachment" => 1));
-      }else{
+      } else {
         $this->pdf->stream($fileName, array("Attachment" => 0));
       }
     }
     // EXPORT AS CSV
-    if($param1 == 'csv'){
+    if ($param1 == 'csv') {
       $date_from   = $date_from;
       $date_to     = $date_to;
       $selected_class = $selected_class;
@@ -852,9 +1113,9 @@ class Superadmin extends CI_Controller {
       foreach ($invoices as $invoice) {
         $student_details = $this->user_model->get_student_details_by_id('student', $invoice['student_id']);
         $class_details = $this->crud_model->get_class_details_by_id($invoice['class_id'])->row_array();
-        if ($invoice['updated_at'] > 0){
+        if ($invoice['updated_at'] > 0) {
           $payment_date = date('d-M-Y', $invoice['updated_at']);
-        }else{
+        } else {
           $payment_date = get_phrase('not_found');
         }
         $lines = array(sprintf('%08d', $invoice['id']), $student_details['name'], $class_details['name'], $invoice['title'], currency($invoice['total_amount']), currency($invoice['paid_amount']), date('d-M-Y', $invoice['created_at']), $payment_date, ucfirst($invoice['status']));
@@ -864,16 +1125,16 @@ class Superadmin extends CI_Controller {
       // FILE DOWNLOADING CODES
       if ($selected_status == 'all') {
         $paymentStatusForTitle = 'paid-and-unpaid';
-      }else{
+      } else {
         $paymentStatusForTitle = $selected_status;
       }
       if ($selected_class == 'all') {
         $classNameForTitle = 'all_class';
-      }else{
+      } else {
         $class_details = $this->crud_model->get_classes($selected_class)->row_array();
         $classNameForTitle = $class_details['name'];
       }
-      $fileName = 'Student_fees-'.date('d-M-Y', $date_from).'-to-'.date('d-M-Y', $date_to).'-'.$classNameForTitle.'-'.$paymentStatusForTitle.'.csv';
+      $fileName = 'Student_fees-' . date('d-M-Y', $date_from) . '-to-' . date('d-M-Y', $date_to) . '-' . $classNameForTitle . '-' . $paymentStatusForTitle . '.csv';
       $this->download_file('assets/csv_file/invoices.csv', $fileName);
     }
   }
@@ -882,10 +1143,11 @@ class Superadmin extends CI_Controller {
   function download_file($path, $name)
   {
     // make sure it's a file before doing anything!
-    if(is_file($path))
-    {
+    if (is_file($path)) {
       // required for IE
-      if(ini_get('zlib.output_compression')) { ini_set('zlib.output_compression', 'Off'); }
+      if (ini_get('zlib.output_compression')) {
+        ini_set('zlib.output_compression', 'Off');
+      }
 
       // get the file mime type using the file extension
       $this->load->helper('file');
@@ -896,12 +1158,12 @@ class Superadmin extends CI_Controller {
       header('Pragma: public');     // required
       header('Expires: 0');         // no cache
       header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-      header('Last-Modified: '.gmdate ('D, d M Y H:i:s', filemtime ($path)).' GMT');
-      header('Cache-Control: private',false);
-      header('Content-Type: '.$mime);  // Add the mime type from Code igniter.
-      header('Content-Disposition: attachment; filename="'.basename($name).'"');  // Add the file name
+      header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($path)) . ' GMT');
+      header('Cache-Control: private', false);
+      header('Content-Type: ' . $mime);  // Add the mime type from Code igniter.
+      header('Content-Disposition: attachment; filename="' . basename($name) . '"');  // Add the file name
       header('Content-Transfer-Encoding: binary');
-      header('Content-Length: '.filesize($path)); // provide file size
+      header('Content-Length: ' . filesize($path)); // provide file size
       header('Connection: close');
       readfile($path); // push it out
       exit();
@@ -910,7 +1172,8 @@ class Superadmin extends CI_Controller {
 
 
   // Expense Category
-  public function expense_category($param1 = "", $param2 = "") {
+  public function expense_category($param1 = "", $param2 = "")
+  {
     if ($param1 == 'create') {
       $response = $this->crud_model->create_expense_category();
       echo $response;
@@ -930,7 +1193,7 @@ class Superadmin extends CI_Controller {
       $this->load->view('backend/superadmin/expense_category/list');
     }
     // showing the index file
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'expense_category';
       $page_data['page_title']  = 'expense_category';
       $this->load->view('backend/index', $page_data);
@@ -938,7 +1201,8 @@ class Superadmin extends CI_Controller {
   }
 
   //Expense Manager
-  public function expense($param1 = "", $param2 = "") {
+  public function expense($param1 = "", $param2 = "")
+  {
 
     // adding expense
     if ($param1 == 'create') {
@@ -960,18 +1224,18 @@ class Superadmin extends CI_Controller {
     // showing the list of expense
     if ($param1 == 'list') {
       $date = explode('-', $this->input->get('date'));
-      $page_data['date_from'] = strtotime($date[0].' 00:00:00');
-      $page_data['date_to']   = strtotime($date[1].' 23:59:59');
+      $page_data['date_from'] = strtotime($date[0] . ' 00:00:00');
+      $page_data['date_to']   = strtotime($date[1] . ' 23:59:59');
       $page_data['expense_category_id'] = $this->input->get('expense_category_id');
       $this->load->view('backend/superadmin/expense/list', $page_data);
     }
 
     // showing the index file
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'expense';
       $page_data['page_title']  = 'expense';
-      $page_data['date_from']   = strtotime(date('d-M-Y', strtotime(' -30 day')).' 00:00:00');
-      $page_data['date_to']     = strtotime(date('d-M-Y').' 23:59:59');
+      $page_data['date_from']   = strtotime(date('d-M-Y', strtotime(' -30 day')) . ' 00:00:00');
+      $page_data['date_to']     = strtotime(date('d-M-Y') . ' 23:59:59');
       $this->load->view('backend/index', $page_data);
     }
   }
@@ -980,34 +1244,35 @@ class Superadmin extends CI_Controller {
   // BACKOFFICE SECTION
 
   //START SESSION_MANAGER section
-  public function session_manager($param1 = '', $param2 = ''){
+  public function session_manager($param1 = '', $param2 = '')
+  {
     $school_id = school_id();
 
-    if($param1 == 'create'){
+    if ($param1 == 'create') {
       $response = $this->crud_model->session_create();
       echo $response;
     }
 
-    if($param1 == 'update'){
+    if ($param1 == 'update') {
       $response = $this->crud_model->session_update($param2);
       echo $response;
     }
 
-    if($param1 == 'delete'){
+    if ($param1 == 'delete') {
       $response = $this->crud_model->session_delete($param2);
       echo $response;
     }
 
-    if($param1 == 'active_session'){
+    if ($param1 == 'active_session') {
       $response = $this->crud_model->active_session($param2);
       echo $response;
     }
 
-    if($param1 == 'reopen_session'){
+    if ($param1 == 'reopen_session') {
       echo $this->db->get_where('sessions', array('school_id' => $school_id, 'status' => 1))->row('name');
     }
 
-    if($param1 == 'reopen_list'){
+    if ($param1 == 'reopen_list') {
       $this->load->view('backend/superadmin/session/table_body');
     }
 
@@ -1015,7 +1280,7 @@ class Superadmin extends CI_Controller {
       $this->load->view('backend/superadmin/session/list');
     }
 
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'session';
       $page_data['page_title'] = 'session_manager';
       $this->load->view('backend/index', $page_data);
@@ -1024,7 +1289,8 @@ class Superadmin extends CI_Controller {
   //END SESSION_MANAGER section
 
   //BOOK LIST MANAGER
-  public function book($param1 = "", $param2 = "") {
+  public function book($param1 = "", $param2 = "")
+  {
     // adding book
     if ($param1 == 'create') {
       $response = $this->crud_model->create_book();
@@ -1048,7 +1314,7 @@ class Superadmin extends CI_Controller {
     }
 
     // showing the index file
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'book';
       $page_data['page_title']  = 'books';
       $this->load->view('backend/index', $page_data);
@@ -1056,7 +1322,8 @@ class Superadmin extends CI_Controller {
   }
 
   //BOOK ISSUE LIST MANAGER
-  public function book_issue($param1 = "", $param2 = "") {
+  public function book_issue($param1 = "", $param2 = "")
+  {
     // adding book
     if ($param1 == 'create') {
       $response = $this->crud_model->create_book_issue();
@@ -1083,23 +1350,24 @@ class Superadmin extends CI_Controller {
     // showing the list of book
     if ($param1 == 'list') {
       $date = explode('-', $this->input->get('date'));
-      $page_data['date_from'] = strtotime($date[0].' 00:00:00');
-      $page_data['date_to']   = strtotime($date[1].' 23:59:59');
+      $page_data['date_from'] = strtotime($date[0] . ' 00:00:00');
+      $page_data['date_to']   = strtotime($date[1] . ' 23:59:59');
       $this->load->view('backend/superadmin/book_issue/list', $page_data);
     }
 
     // showing the index file
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'book_issue';
       $page_data['page_title']  = 'book_issue';
-      $page_data['date_from'] = strtotime(date('d-M-Y', strtotime(' -30 day')).' 00:00:00');
-      $page_data['date_to']   = strtotime(date('d-M-Y').' 23:59:59');
+      $page_data['date_from'] = strtotime(date('d-M-Y', strtotime(' -30 day')) . ' 00:00:00');
+      $page_data['date_to']   = strtotime(date('d-M-Y') . ' 23:59:59');
       $this->load->view('backend/index', $page_data);
     }
   }
 
   // ADDON MANAGER
-  public function addon_manager($param1 = "", $param2 = "") {
+  public function addon_manager($param1 = "", $param2 = "")
+  {
     if ($param1 == 'install') {
       $response = $this->addon_model->install_addon();
       echo $response;
@@ -1126,7 +1394,7 @@ class Superadmin extends CI_Controller {
       $this->load->view('backend/superadmin/addon/list');
     }
     // showing the index file
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'addon';
       $page_data['page_title']  = 'addon_manager';
       $this->load->view('backend/index', $page_data);
@@ -1134,7 +1402,8 @@ class Superadmin extends CI_Controller {
   }
 
   // NOTICEBOARD MANAGER
-  public function noticeboard($param1 = "", $param2 = "", $param3 = "") {
+  public function noticeboard($param1 = "", $param2 = "", $param3 = "")
+  {
     // adding notice
     if ($param1 == 'create') {
       $response = $this->crud_model->create_notice();
@@ -1164,7 +1433,7 @@ class Superadmin extends CI_Controller {
     }
 
     // showing the index file
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'noticeboard';
       $page_data['page_title']  = 'noticeboard';
       $this->load->view('backend/index', $page_data);
@@ -1172,7 +1441,8 @@ class Superadmin extends CI_Controller {
   }
 
   // SETTINGS MANAGER
-  public function system_settings($param1 = "", $param2 = "") {
+  public function system_settings($param1 = "", $param2 = "")
+  {
     if ($param1 == 'update') {
       $response = $this->settings_model->update_system_settings();
       echo $response;
@@ -1183,7 +1453,7 @@ class Superadmin extends CI_Controller {
       echo $response;
     }
     // showing the System Settings file
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'settings';
       $page_data['page_title']  = 'system_settings';
       $page_data['settings_type'] = 'system_settings';
@@ -1192,7 +1462,8 @@ class Superadmin extends CI_Controller {
   }
 
   // FRONTEND SETTINGS MANAGER
-  public function website_settings($param1 = '', $param2 = '', $param3 = '') {
+  public function website_settings($param1 = '', $param2 = '', $param3 = '')
+  {
     if ($param1 == 'events') {
       $page_data['page_content']  = 'events';
     }
@@ -1215,7 +1486,7 @@ class Superadmin extends CI_Controller {
       $page_data['page_content']  = 'gallery_image';
       $page_data['gallery_id']  = $param2;
     }
-    if(empty($param1) || $param1 == 'general_settings'){
+    if (empty($param1) || $param1 == 'general_settings') {
       $page_data['page_content']  = 'general_settings';
     }
 
@@ -1225,7 +1496,8 @@ class Superadmin extends CI_Controller {
     $this->load->view('backend/index', $page_data);
   }
 
-  public function website_update($param1 = "") {
+  public function website_update($param1 = "")
+  {
     if ($param1 == 'general_settings') {
       $response = $this->frontend_model->update_frontend_general_settings();
     }
@@ -1233,7 +1505,8 @@ class Superadmin extends CI_Controller {
     echo $response;
   }
 
-  public function events($param1 = "", $param2 = "") {
+  public function events($param1 = "", $param2 = "")
+  {
     // DEACTIVE ADDONS
     if ($param1 == 'create') {
       $response = $this->frontend_model->event_create();
@@ -1256,13 +1529,14 @@ class Superadmin extends CI_Controller {
     }
 
     // showing the System Settings file
-    if(empty($param1)){
+    if (empty($param1)) {
       redirect(route('website_settings/events'), 'refresh');
     }
   }
 
   //FRONTEND GALLERY
-  public function frontend_gallery($param1 = "", $param2 = "", $param3 = "") {
+  public function frontend_gallery($param1 = "", $param2 = "", $param3 = "")
+  {
     if ($param1 == 'create') {
       $response = $this->frontend_model->add_frontend_gallery();
       echo $response;
@@ -1301,53 +1575,58 @@ class Superadmin extends CI_Controller {
   }
 
   //ABOUT US UPDATE
-  public function about_us($param1 = "") {
+  public function about_us($param1 = "")
+  {
     if ($param1 == 'update') {
       $response = $this->frontend_model->update_about_us();
       echo $response;
-    }else{
+    } else {
       redirect(site_url(), 'refresh');
     }
   }
 
   //PRIVACY POLICY UPDATE
-  public function privacy_policy($param1 = "") {
+  public function privacy_policy($param1 = "")
+  {
     if ($param1 == 'update') {
       $response = $this->frontend_model->update_privacy_policy();
       echo $response;
-    }else{
+    } else {
       redirect(site_url(), 'refresh');
     }
   }
 
   //TERMS AND CONDITION UPDATE
-  public function terms_and_conditions($param1 = "") {
+  public function terms_and_conditions($param1 = "")
+  {
     if ($param1 == 'update') {
       $response = $this->frontend_model->update_terms_and_conditions();
       echo $response;
-    }else{
+    } else {
       redirect(site_url(), 'refresh');
     }
   }
   //TERMS AND CONDITION UPDATE
-  public function homepage_slider($param1 = "") {
+  public function homepage_slider($param1 = "")
+  {
     if ($param1 == 'update') {
       $response = $this->frontend_model->update_homepage_slider();
       echo $response;
-    }else{
+    } else {
       redirect(site_url(), 'refresh');
     }
   }
 
   // SETTINGS MANAGER
-  public function school_settings($param1 = "", $param2 = "") {
+  public function school_settings($param1 = "", $param2 = "")
+  {
     if ($param1 == 'update') {
       $response = $this->settings_model->update_current_school_settings();
       echo $response;
     }
 
     // showing the System Settings file
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'settings';
       $page_data['page_title']  = 'school_settings';
       $page_data['settings_type'] = 'school_settings';
@@ -1356,7 +1635,8 @@ class Superadmin extends CI_Controller {
   }
 
   // PAYMENT SETTINGS MANAGER
-  public function payment_settings($param1 = "", $param2 = "") {
+  public function payment_settings($param1 = "", $param2 = "")
+  {
     if ($param1 == 'system') {
       $response = $this->settings_model->update_system_currency_settings();
       echo $response;
@@ -1371,7 +1651,7 @@ class Superadmin extends CI_Controller {
     }
 
     // showing the Payment Settings file
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'settings';
       $page_data['page_title']  = 'payment_settings';
       $page_data['settings_type'] = 'payment_settings';
@@ -1380,7 +1660,8 @@ class Superadmin extends CI_Controller {
   }
 
   // LANGUAGE SETTINGS
-  public function language($param1 = "", $param2 = "") {
+  public function language($param1 = "", $param2 = "")
+  {
     // adding language
     if ($param1 == 'create') {
       $response = $this->settings_model->create_language();
@@ -1416,29 +1697,30 @@ class Superadmin extends CI_Controller {
       $updatedValue = $this->input->post('updatedValue');
       $key = $this->input->post('key');
       saveJSONFile($current_editing_language, $key, $updatedValue);
-      echo $current_editing_language.' '.$key.' '.$updatedValue;
+      echo $current_editing_language . ' ' . $key . ' ' . $updatedValue;
     }
 
     // GET THE DROPDOWN OF LANGUAGES
-    if($param1 == 'dropdown') {
+    if ($param1 == 'dropdown') {
       $this->load->view('backend/superadmin/language/dropdown');
     }
     // showing the index file
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'language';
       $page_data['page_title']  = 'languages';
       $this->load->view('backend/index', $page_data);
     }
   }
   // SMTP SETTINGS MANAGER
-  public function smtp_settings($param1 = "", $param2 = "") {
+  public function smtp_settings($param1 = "", $param2 = "")
+  {
     if ($param1 == 'update') {
       $response = $this->settings_model->update_smtp_settings();
       echo $response;
     }
 
     // showing the Smtp Settings file
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'settings';
       $page_data['page_title']  = 'smtp_settings';
       $page_data['settings_type'] = 'smtp_settings';
@@ -1447,7 +1729,8 @@ class Superadmin extends CI_Controller {
   }
 
   //MANAGE PROFILE STARTS
-  public function profile($param1 = "", $param2 = "") {
+  public function profile($param1 = "", $param2 = "")
+  {
     if ($param1 == 'update_profile') {
       $response = $this->user_model->update_profile();
       echo $response;
@@ -1458,7 +1741,7 @@ class Superadmin extends CI_Controller {
     }
 
     // showing the Smtp Settings file
-    if(empty($param1)){
+    if (empty($param1)) {
       $page_data['folder_name'] = 'profile';
       $page_data['page_title']  = 'manage_profile';
       $this->load->view('backend/index', $page_data);
@@ -1467,7 +1750,8 @@ class Superadmin extends CI_Controller {
   //MANAGE PROFILE ENDS
 
   // ABOUT APPLICATION STARTS
-  public function about() {
+  public function about()
+  {
 
     $page_data['application_details'] = $this->settings_model->get_application_details();
     $page_data['folder_name'] = 'about';
