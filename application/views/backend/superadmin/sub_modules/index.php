@@ -19,7 +19,7 @@
                 <div class="col-md-3"></div>
                 <div class="col-md-4">
                     <select name="class_id" id="class_id" class="form-control select2" data-toggle = "select2" required>
-                        <option value=""><?php echo get_phrase('select_a_class'); ?></option>
+                        <option value=""><?php echo get_phrase('select_a_module'); ?></option>
                         <?php
                         $classes = $this->db->get_where('classes', array('school_id' => $school_id))->result_array();?>
                         <?php foreach ($classes as $class): ?>
@@ -45,7 +45,7 @@ function filter_class(){
     if(class_id != ""){
         showAllSubjects();
     }else{
-        toastr.error('<?php echo get_phrase('please_select_a_class'); ?>');
+        toastr.error('<?php echo get_phrase('please_select_a_module'); ?>');
     }
 }
 
@@ -53,7 +53,7 @@ var showAllSubjects = function () {
     var class_id = $('#class_id').val();
     if(class_id != ""){
         $.ajax({
-            url: '<?php echo route('courses/list/') ?>'+class_id,
+            url: '<?php echo route('sub_modules/list/') ?>'+class_id,
             success: function(response){
                 $('.subject_content').html(response);
             }

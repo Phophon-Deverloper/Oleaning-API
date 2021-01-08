@@ -5,6 +5,22 @@
     <div class="form-row">
 
       <div class="form-group col-md-12">
+        <label for="class"><?php echo get_phrase('class'); ?></label>
+        <select name="class_id" id="class_id_on_create" class="form-control select2" data-toggle="select2" required>
+          <option value=""><?php echo get_phrase('select_a_class'); ?></option>
+          <?php
+          $classes = $this->db->get_where('classes', array('school_id' => $school_id))->result_array();
+          foreach ($classes as $class) {
+          ?>
+            <option value="<?php echo $class['id']; ?>" <?php if ($class['id'] == $subject['class_id']) {
+                                                          echo 'selected';
+                                                        } ?>><?php echo $class['name']; ?></option>
+          <?php } ?>
+        </select>
+        <small id="class_help" class="form-text text-muted"><?php echo get_phrase('select_a_class'); ?></small>
+      </div>
+
+      <div class="form-group col-md-12">
         <label for="name"><?php echo get_phrase('course_name'); ?></label>
         <input type="text" class="form-control" id="name" name="name" value="<?php echo $subject['name']; ?>" required>
         <small id="name_help" class="form-text text-muted"><?php echo get_phrase('provide_subject_name'); ?></small>

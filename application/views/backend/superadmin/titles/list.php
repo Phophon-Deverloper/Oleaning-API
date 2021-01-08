@@ -7,6 +7,7 @@ if (isset($class_id)):
     <thead>
       <tr style="background-color: #313a46; color: #ababab;">
         <th><?php echo get_phrase('name'); ?></th>
+        <th><?php echo get_phrase('type'); ?></th>
         <th><?php echo get_phrase('options'); ?></th>
       </tr>
     </thead>
@@ -18,15 +19,16 @@ if (isset($class_id)):
         ?>
         <tr>
           <td><?php echo $subject['name']; ?></td>
+          <td><?php echo $subject['name']; ?></td>
           <td>
 
             <div class="dropdown text-center">
     					<button type="button" class="btn btn-sm btn-icon btn-rounded btn-outline-secondary dropdown-btn dropdown-toggle arrow-none card-drop" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></button>
     					<div class="dropdown-menu dropdown-menu-right">
     						<!-- item-->
-    						<a href="javascript:void(0);" class="dropdown-item" onclick="rightModal('<?php echo site_url('modal/popup/courses/edit/'.$subject['id'])?>', '<?php echo get_phrase('update_course'); ?>');"><?php echo get_phrase('edit'); ?></a>
+    						<a href="javascript:void(0);" class="dropdown-item" onclick="rightModal('<?php echo site_url('modal/popup/titles/edit/'.$subject['id'])?>', '<?php echo get_phrase('update_title'); ?>');"><?php echo get_phrase('edit'); ?></a>
     						<!-- item-->
-    						<a href="javascript:void(0);" class="dropdown-item" onclick="confirmModal('<?php echo route('subject/delete/'.$subject['id']); ?>', showAllSubjects)"><?php echo get_phrase('delete'); ?></a>
+    						<!-- <a href="javascript:void(0);" class="dropdown-item" onclick="confirmModal('<?php echo route('subject/delete/'.$subject['id']); ?>', showAllSubjects)"><?php echo get_phrase('delete'); ?></a> -->
     					</div>
     				</div>
           </td>
