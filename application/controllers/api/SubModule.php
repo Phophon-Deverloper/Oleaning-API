@@ -11,6 +11,16 @@ class Submodule extends REST_Controller {
         $this->tokenHandler = new TokenHandler();
     }
 
+    public function index_get($id)
+	{
+        $received_Token = $this->input->request_headers('Authorization');
+        if (isset($received_Token['Authorization'])){
+            $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
+        }
+        $submoduledata = $this->db->get_where("submodule", ['module_id' => $id])->result();
+        $this->response($submoduledata, REST_Controller::HTTP_OK);
+    }
+
 	public function title_get($id)
 	{
         $usertitleData = [];
