@@ -19,12 +19,12 @@
             <div class="row mt-3">
                 <div class="col-md-3"></div>
                 <div class="col-md-4">
-                    <select name="class_id" id="class_id" class="form-control select2" data-toggle = "select2" required>
-                        <option value=""><?php echo get_phrase('select_a_class'); ?></option>
+                    <select name="category_id" id="category_id" class="form-control select2" data-toggle = "select2" required>
+                        <option value=""><?php echo get_phrase('select_a_catergory'); ?></option>
                         <?php
-                        $classes = $this->db->get_where('classes', array('school_id' => $school_id))->result_array();?>
-                        <?php foreach ($classes as $class): ?>
-                            <option value="<?php echo $class['id']; ?>"><?php echo $class['name']; ?></option>
+                        $categories = $this->db->get('category')->result_array();?>
+                        <?php foreach ($categories as $category): ?>
+                            <option value="<?php echo $category['category_id']; ?>"><?php echo $category['category_name']; ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -42,19 +42,19 @@
 
 <script>
 function filter_class(){
-    var class_id = $('#class_id').val();
-    if(class_id != ""){
+    var category_id = $('#category_id').val();
+    if(category_id != ""){
         showAllSubjects();
     }else{
-        toastr.error('<?php echo get_phrase('please_select_a_class'); ?>');
+        toastr.error('<?php echo get_phrase('please_select_a_category'); ?>');
     }
 }
 
 var showAllSubjects = function () {
-    var class_id = $('#class_id').val();
-    if(class_id != ""){
+    var category_id = $('#category_id').val();
+    if(category_id != ""){
         $.ajax({
-            url: '<?php echo route('courses/list/') ?>'+class_id,
+            url: '<?php echo route('categories/list/') ?>'+category_id,
             success: function(response){
                 $('.subject_content').html(response);
             }

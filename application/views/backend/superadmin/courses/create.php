@@ -9,30 +9,30 @@
       <select name="class_id" id="class_id_on_create" class="form-control select2" data-toggle="select2" required>
         <option value=""><?php echo get_phrase('select_a_category'); ?></option>
         <?php
-        $classes = $this->db->get_where('classes', array('school_id' => school_id()))->result_array();
-        foreach($classes as $class){
+        $categories = $this->db->get('category')->result_array();
+        foreach($categories as $category){
           ?>
-          <option value="<?php echo $class['id']; ?>"><?php echo $class['name']; ?></option>
+          <option value="<?php echo $category['category_id']; ?>"><?php echo $category['category_name']; ?></option>
         <?php } ?>
       </select>
-      <small id="class_help" class="form-text text-muted"><?php echo get_phrase('select_a_class'); ?></small>
+      <small id="class_help" class="form-text text-muted"><?php echo get_phrase('select_a_category'); ?></small>
     </div>
 
     <div class="form-group col-md-12">
       <label for="name"><?php echo get_phrase('course_name'); ?></label>
-      <input type="text" class="form-control" id="name" name="name" required>
+      <input type="text" class="form-control" id="course_name" name="course_name" required>
       <small id="name_help" class="form-text text-muted"><?php echo get_phrase('provide_course_name'); ?></small>
     </div>
 
     <div class="form-group col-md-12">
       <label for="description"><?php echo get_phrase('course_description'); ?></label>
-      <input type="text" class="form-control" id="description" description="description" required>
+      <input type="text" class="form-control" id="description" name="course_description" required>
       <small id="description_help" class="form-text text-muted"><?php echo get_phrase('provide_course_description'); ?></small>
     </div>
 
     <div class="form-group col-md-12">
       <label for="image"><?php echo get_phrase('course_image_url'); ?></label>
-      <input type="text" class="form-control" id="image" description="image" required>
+      <input type="text" class="form-control" id="image" name="course_image" required>
       <small id="image_help" class="form-text text-muted"><?php echo get_phrase('provide_course_image_url'); ?></small>
     </div>
 

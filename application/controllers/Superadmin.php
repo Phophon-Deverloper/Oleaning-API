@@ -146,17 +146,17 @@ class Superadmin extends CI_Controller
   {
 
     if ($param1 == 'create') {
-      $response = $this->crud_model->categories_create();
+      $response = $this->crud_model->category_create();
       echo $response;
     }
 
     if ($param1 == 'update') {
-      $response = $this->crud_model->categories_update($param2);
+      $response = $this->crud_model->category_update($param2);
       echo $response;
     }
 
     if ($param1 == 'delete') {
-      $response = $this->crud_model->categories_delete($param2);
+      $response = $this->crud_model->category_delete($param2);
       echo $response;
     }
 
@@ -204,7 +204,7 @@ class Superadmin extends CI_Controller
     }
   }
 
-  public function class_wise_courses($class_id)
+  public function course_wise_courses($class_id)
   {
 
     // PROVIDE A LIST OF SUBJECT ACCORDING TO CLASS ID

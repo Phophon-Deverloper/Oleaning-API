@@ -1081,5 +1081,12 @@
     "answer_index": "Answer index",
     "type": "Type",
     "assign": "Assign",
-    "assign_to": "Assign to"
+    "assign_to": "Assign to",
+    "create_category": "Create category",
+    "provide_category_name": "Provide category name",
+    "classroom_added_successfully": "Classroom added successfully",
+    "update_category": "Update category",
+    "classroom_deleted_successfully": "Classroom deleted successfully",
+    "select_a_catergory": "Select a catergory",
+    "please_select_a_category": "Please select a category"
 }

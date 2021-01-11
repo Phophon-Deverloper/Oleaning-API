@@ -177,6 +177,46 @@ class Crud_model extends CI_Model {
 	}
 	//END CLASS_ROOM section
 
+	//START category section
+	public function category_create()
+	{
+		$data['category_name'] = html_escape($this->input->post('category_name'));
+		// $data['school_id'] = html_escape($this->input->post('school_id'));
+		$this->db->insert('category', $data);
+
+		$response = array(
+			'status' => true,
+			'notification' => get_phrase('classroom_added_successfully')
+		);
+		return json_encode($response);
+	}
+
+	public function category_update($param1 = '')
+	{
+		$data['category_name'] = html_escape($this->input->post('category_name'));
+		$this->db->where('category_id', $param1);
+		$this->db->update('category', $data);
+
+		$response = array(
+			'status' => true,
+			'notification' => get_phrase('classroom_updated_successfully')
+		);
+		return json_encode($response);
+	}
+
+	public function category_delete($param1 = '')
+	{
+		$this->db->where('category_id', $param1);
+		$this->db->delete('category');
+
+		$response = array(
+			'status' => true,
+			'notification' => get_phrase('classroom_deleted_successfully')
+		);
+		return json_encode($response);
+	}
+	//END category section
+
 
 	//START MANAGE_SESSION section
 	public function session_create()
