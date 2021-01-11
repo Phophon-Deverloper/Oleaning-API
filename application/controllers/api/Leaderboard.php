@@ -19,30 +19,29 @@ class Leaderboard extends REST_Controller {
         $received_Token = $this->input->request_headers('Authorization');
         if (isset($received_Token['Authorization'])){
             $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
-        }
-        $userdata = $this->db->get_where("users")->result();
-        // $enrolldata = $this->db->get_where("enrollment", ['user_id' => $jwtData['id']])->result();
-        // $titledata = $this->db->get_where("title", ['title_id' => $jsonArray['title_id']])->row_array();
-        foreach ($userdata as $data) {
-            $data = (array) $data;
-            $scoreuserdata = $scoreuserdata + array("user_id" => $data['id']) + array("user_name" => $data['name']);
-            $enrolldata = $this->db->get_where("enrollment", ['user_id' => $data['id']])->result();
-            foreach ($enrolldata as $endata) {
-                $endata = (array) $endata;
-                $titledata = $this->db->get_where("titleprogress", ['enrollment_id' => $endata['enrollment_id']])->result();
-                if ($titledata != []) {
-                    foreach ($titledata as $tdata) {
-                        array_push($progress, $tdata);
+            $userdata = $this->db->get_where("users")->result();
+            foreach ($userdata as $data) {
+                $data = (array) $data;
+                $scoreuserdata = $scoreuserdata + array("user_id" => $data['id']) + array("user_name" => $data['name']);
+                $enrolldata = $this->db->get_where("enrollment", ['user_id' => $data['id']])->result();
+                foreach ($enrolldata as $endata) {
+                    $endata = (array) $endata;
+                    $titledata = $this->db->get_where("titleprogress", ['enrollment_id' => $endata['enrollment_id']])->result();
+                    if ($titledata != []) {
+                        foreach ($titledata as $tdata) {
+                            array_push($progress, $tdata);
+                        }
                     }
                 }
+                $scoreuserdata = $scoreuserdata + array("module_progress_current" => count($progress));
+                array_push($board, $scoreuserdata);
+                $scoreuserdata = array();
+                $progress = array();
             }
-            $scoreuserdata = $scoreuserdata + array("module_progress_current" => count($progress));
-            array_push($board, $scoreuserdata);
-            $scoreuserdata = array();
-            $progress = array();
+            $this->response($board, REST_Controller::HTTP_OK);
+        }else{
+            $this->response(REST_Controller::HTTP_UNAUTHORIZED);
         }
-
-        $this->response($board, REST_Controller::HTTP_OK);
     }
 }
 
