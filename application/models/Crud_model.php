@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
 *  @author   : Creativeitem
@@ -9,8 +9,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 *  http://support.creativeitem.com
 */
 
-require APPPATH.'third_party/PHPExcel/IOFactory.php';
-class Crud_model extends CI_Model {
+require APPPATH . 'third_party/PHPExcel/IOFactory.php';
+class Crud_model extends CI_Model
+{
 
 	protected $school_id;
 	protected $active_session;
@@ -24,17 +25,15 @@ class Crud_model extends CI_Model {
 
 
 	//START CLASS section
-	public function get_classes($id = "") {
+	public function get_classes($id = "")
+	{
 
 		$this->db->where('school_id', $this->school_id);
 
 		if ($id > 0) {
 			$this->db->where('id', $id);
-
 		}
 		return $this->db->get('classes');
-
-
 	}
 	public function class_create()
 	{
@@ -71,13 +70,13 @@ class Crud_model extends CI_Model {
 	{
 		$section_id = html_escape($this->input->post('section_id'));
 		$section_name = html_escape($this->input->post('name'));
-		foreach($section_id as $key => $value){
-			if($value == 0){
+		foreach ($section_id as $key => $value) {
+			if ($value == 0) {
 				$data['class_id'] = $param1;
 				$data['name'] = $section_name[$key];
 				$this->db->insert('sections', $data);
 			}
-			if($value != 0 && $value != 'delete'){
+			if ($value != 0 && $value != 'delete') {
 				$data['name'] = $section_name[$key];
 				$this->db->where('class_id', $param1);
 				$this->db->where('id', $value);
@@ -88,7 +87,7 @@ class Crud_model extends CI_Model {
 			if (strpos($value, 'delete') == true) {
 				$section_value = str_replace('delete', '', $value);
 			}
-			if($value == $section_value.'delete'){
+			if ($value == $section_value . 'delete') {
 				$data['name'] = $section_name[$key];
 				$this->db->where('class_id', $param1);
 				$this->db->where('id', $section_value);
@@ -119,18 +118,20 @@ class Crud_model extends CI_Model {
 	}
 
 	// Get section details by class and section id
-	public function get_section_details_by_id($type = "", $id = "") {
+	public function get_section_details_by_id($type = "", $id = "")
+	{
 		$section_details = array();
 		if ($type == 'class') {
 			$section_details = $this->db->get_where('sections', array('class_id' => $id));
-		}elseif ($type == 'section') {
+		} elseif ($type == 'section') {
 			$section_details = $this->db->get_where('sections', array('id' => $id));
 		}
 		return $section_details;
 	}
 
 	//get Class details by id
-	public function get_class_details_by_id($id) {
+	public function get_class_details_by_id($id)
+	{
 		$class_details = $this->db->get_where('classes', array('id' => $id));
 		return $class_details;
 	}
@@ -217,6 +218,75 @@ class Crud_model extends CI_Model {
 	}
 	//END category section
 
+	//START course section
+	public function course_create_excel()
+	{
+		$data['category_id'] = html_escape($this->input->post('category_id'));
+		$data['course_name'] = html_escape($this->input->post('course_name'));
+		$data['course_description'] = html_escape($this->input->post('course_description'));
+		$data['course_image'] = html_escape($this->input->post('course_image'));
+		$this->db->insert('course', $data);
+		$course_id = $this->db->insert_id();
+
+		$file_name = $_FILES['csv_file']['name'];
+		move_uploaded_file($_FILES['csv_file']['tmp_name'], 'uploads/csv_file/course.generate.csv');
+
+		if (($handle = fopen('uploads/csv_file/course.generate.csv', 'r')) !== FALSE) { // Check the resource is valid
+			$count = 0;
+			$current_module_id = null;
+			$current_submodule_id = null;
+			while(($all_data = fgetcsv($handle, 1000, ",")) !== FALSE) { // Check opening the file is OK!
+				if ($count > 0) {
+					// if module is not null
+					if(!empty(html_escape($all_data[1]))){
+						$module_data['module_name'] = html_escape($all_data[1]);
+						$module_data['module_description'] = "";
+						$module_data['module_image'] = "";
+						$module_data['course_id'] = $course_id;
+						$this->db->insert('module', $module_data);
+						$current_module_id = $this->db->insert_id();
+					}
+					// if submodule is not null
+					if(!empty(html_escape($all_data[2]))){
+						$submodule_data['submodule_name'] = html_escape($all_data[2]);
+						$submodule_data['submodule_description'] = "";
+						$submodule_data['module_id'] = $current_module_id;
+						$this->db->insert('submodule', $submodule_data);
+						$current_submodule_id = $this->db->insert_id();
+					}
+					//if title is not null
+					//Not include image url
+					if(!empty(html_escape($all_data[4]))){
+						$title_data['title_name'] = html_escape($all_data[3]);
+						$title_data['title_description'] = html_escape($all_data[4]);
+						$title_data['title_type'] = html_escape($all_data[7]);
+						$title_data['submodule_id'] = $current_submodule_id;
+						$this->db->insert('title', $title_data);
+						$title_id = $this->db->insert_id();
+						//Not include more description
+						if($title_data['title_type'] === "quiz"){
+							$quizchoice_data['choice'] = html_escape($all_data[5]);
+							$quizchoice_data['answer'] = html_escape($all_data[6]);
+							$quizchoice_data['title_id'] = $title_id;
+							$this->db->insert('title', $quizchoice_data);
+						}
+					}
+				}
+				$count++;
+			}
+			
+			fclose($handle);
+		}
+		$response = array(
+			'status' => true,
+			'notification' => get_phrase('course_created_successfully'),
+			'count' => $count
+		);
+
+		return json_encode($response);
+	}
+	//END course section 
+
 
 	//START MANAGE_SESSION section
 	public function session_create()
@@ -257,7 +327,8 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function active_session($param1 = ''){
+	public function active_session($param1 = '')
+	{
 		$previous_session_id = active_session();
 		$this->db->where('id', $previous_session_id);
 		$this->db->update('sessions', array('status' => 0));
@@ -317,10 +388,11 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function get_subject_by_id($subject_id = '') {
+	public function get_subject_by_id($subject_id = '')
+	{
 		return $this->db->get_where('subjects', array('id' => $subject_id))->row_array();
 	}
-	
+
 	//END SUBJECT section
 
 
@@ -378,8 +450,8 @@ class Crud_model extends CI_Model {
 		$data['session_id'] = html_escape($this->input->post('session_id'));
 		$data['school_id'] = html_escape($this->input->post('school_id'));
 		$file_ext = pathinfo($_FILES['syllabus_file']['name'], PATHINFO_EXTENSION);
-		$data['file'] = md5(rand(10000000, 20000000)).'.'.$file_ext;
-		move_uploaded_file($_FILES['syllabus_file']['tmp_name'], 'uploads/syllabus/'.$data['file']);
+		$data['file'] = md5(rand(10000000, 20000000)) . '.' . $file_ext;
+		move_uploaded_file($_FILES['syllabus_file']['tmp_name'], 'uploads/syllabus/' . $data['file']);
 		$this->db->insert('syllabuses', $data);
 
 		$response = array(
@@ -388,13 +460,14 @@ class Crud_model extends CI_Model {
 		);
 		return json_encode($response);
 	}
-	public function syllabus_delete($param1){
+	public function syllabus_delete($param1)
+	{
 		$syllabus_details = $this->get_syllabus_by_id($param1);
 		$this->db->where('id', $param1);
 		$this->db->delete('syllabuses');
-		$path = 'uploads/syllabus/'.$syllabus_details['file'];
-		if (file_exists($path)){
-				unlink($path);
+		$path = 'uploads/syllabus/' . $syllabus_details['file'];
+		if (file_exists($path)) {
+			unlink($path);
 		}
 		$response = array(
 			'status' => true,
@@ -403,7 +476,8 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function get_syllabus_by_id($syllabus_id = "") {
+	public function get_syllabus_by_id($syllabus_id = "")
+	{
 		return $this->db->get_where('syllabuses', array('id' => $syllabus_id))->row_array();
 	}
 	//END SYLLABUS section
@@ -481,17 +555,17 @@ class Crud_model extends CI_Model {
 		$data['school_id'] = $this->school_id;
 		$data['session_id'] = $this->active_session;
 		$check_data = $this->db->get_where('daily_attendances', array('timestamp' => $data['timestamp'], 'class_id' => $data['class_id'], 'section_id' => $data['section_id'], 'session_id' => $data['session_id'], 'school_id' => $data['school_id']));
-		if($check_data->num_rows() > 0){
-			foreach($students as $key => $student):
-				$data['status'] = $this->input->post('status-'.$student);
+		if ($check_data->num_rows() > 0) {
+			foreach ($students as $key => $student) :
+				$data['status'] = $this->input->post('status-' . $student);
 				$data['student_id'] = $student;
 				$attendance_id = $this->input->post('attendance_id');
 				$this->db->where('id', $attendance_id[$key]);
 				$this->db->update('daily_attendances', $data);
 			endforeach;
-		}else{
-			foreach($students as $student):
-				$data['status'] = $this->input->post('status-'.$student);
+		} else {
+			foreach ($students as $student) :
+				$data['status'] = $this->input->post('status-' . $student);
 				$data['student_id'] = $student;
 				$this->db->insert('daily_attendances', $data);
 			endforeach;
@@ -507,7 +581,8 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function get_todays_attendance() {
+	public function get_todays_attendance()
+	{
 		$checker = array(
 			'timestamp' => strtotime(date('Y-m-d')),
 			'school_id' => $this->school_id,
@@ -523,8 +598,8 @@ class Crud_model extends CI_Model {
 	public function event_calendar_create()
 	{
 		$data['title'] = html_escape($this->input->post('title'));
-		$data['starting_date'] = $this->input->post('starting_date').' 00:00:1';
-		$data['ending_date'] = $this->input->post('ending_date').' 23:59:59';
+		$data['starting_date'] = $this->input->post('starting_date') . ' 00:00:1';
+		$data['ending_date'] = $this->input->post('ending_date') . ' 23:59:59';
 		$data['school_id'] = $this->school_id;
 		$data['session'] = $this->active_session;
 		$this->db->insert('event_calendars', $data);
@@ -540,10 +615,10 @@ class Crud_model extends CI_Model {
 	public function event_calendar_update($param1 = '')
 	{
 		$data['title'] = html_escape($this->input->post('title'));
-		$starting_date = strtotime(date('d/m/Y')) +1;
-		$ending_date = strtotime(date('d/m/Y')) -1;
-		$data['starting_date'] = $this->input->post('starting_date').' 00:00:1';
-		$data['ending_date'] = $this->input->post('ending_date').' 23:59:59';
+		$starting_date = strtotime(date('d/m/Y')) + 1;
+		$ending_date = strtotime(date('d/m/Y')) - 1;
+		$data['starting_date'] = $this->input->post('starting_date') . ' 00:00:1';
+		$data['ending_date'] = $this->input->post('ending_date') . ' 23:59:59';
 		$this->db->where('id', $param1);
 		$this->db->update('event_calendars', $data);
 
@@ -568,13 +643,15 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function all_events(){
+	public function all_events()
+	{
 
 		$event_calendars = $this->db->get_where('event_calendars', array('school_id' => $this->school_id, 'session' => $this->active_session))->result_array();
 		return json_encode($event_calendars);
 	}
 
-	public function get_current_month_events() {
+	public function get_current_month_events()
+	{
 		$this->db->where('school_id', $this->school_id);
 		$this->db->where('session', $this->active_session);
 		$events = $this->db->get('event_calendars');
@@ -583,17 +660,18 @@ class Crud_model extends CI_Model {
 	//END EVENT CALENDAR section
 
 	// START OF NOTICEBOARD SECTION
-	public function create_notice() {
+	public function create_notice()
+	{
 		$data['notice_title']     = html_escape($this->input->post('notice_title'));
 		$data['notice']           = html_escape($this->input->post('notice'));
 		$data['show_on_website']  = $this->input->post('show_on_website');
-		$data['date'] 						= $this->input->post('date').' 00:00:1';
+		$data['date'] 						= $this->input->post('date') . ' 00:00:1';
 		$data['school_id'] 				= $this->school_id;
 		$data['session'] 					= $this->active_session;
 		if ($_FILES['notice_photo']['name'] != '') {
-			$data['image']  = random(15).'.jpg';
-			move_uploaded_file($_FILES['notice_photo']['tmp_name'], 'uploads/images/notice_images/'. $data['image']);
-		}else{
+			$data['image']  = random(15) . '.jpg';
+			move_uploaded_file($_FILES['notice_photo']['tmp_name'], 'uploads/images/notice_images/' . $data['image']);
+		} else {
 			$data['image']  = 'placeholder.png';
 		}
 		$this->db->insert('noticeboard', $data);
@@ -606,14 +684,15 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function update_notice($notice_id) {
+	public function update_notice($notice_id)
+	{
 		$data['notice_title']     = html_escape($this->input->post('notice_title'));
 		$data['notice']           = html_escape($this->input->post('notice'));
 		$data['show_on_website']  = $this->input->post('show_on_website');
-		$data['date'] 						= $this->input->post('date').' 00:00:1';
+		$data['date'] 						= $this->input->post('date') . ' 00:00:1';
 		if ($_FILES['notice_photo']['name'] != '') {
-			$data['image']  = random(15).'.jpg';
-			move_uploaded_file($_FILES['notice_photo']['tmp_name'], 'uploads/images/notice_images/'. $data['image']);
+			$data['image']  = random(15) . '.jpg';
+			move_uploaded_file($_FILES['notice_photo']['tmp_name'], 'uploads/images/notice_images/' . $data['image']);
 		}
 		$this->db->where('id', $notice_id);
 		$this->db->update('noticeboard', $data);
@@ -626,7 +705,8 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function delete_notice($notice_id) {
+	public function delete_notice($notice_id)
+	{
 		$this->db->where('id', $notice_id);
 		$this->db->delete('noticeboard');
 
@@ -638,16 +718,18 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function get_all_the_notices() {
+	public function get_all_the_notices()
+	{
 		$notices = $this->db->get_where('noticeboard', array('school_id' => $this->school_id, 'session' => $this->active_session))->result_array();
 		return json_encode($notices);
 	}
 
-	public function get_noticeboard_image($image) {
-		if (file_exists('uploads/images/notice_images/'.$image))
-		return base_url().'uploads/images/notice_images/'.$image;
+	public function get_noticeboard_image($image)
+	{
+		if (file_exists('uploads/images/notice_images/' . $image))
+			return base_url() . 'uploads/images/notice_images/' . $image;
 		else
-		return base_url().'uploads/images/notice_images/placeholder.png';
+			return base_url() . 'uploads/images/notice_images/placeholder.png';
 	}
 	// END OF NOTICEBOARD SECTION
 
@@ -695,14 +777,16 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function get_exam_by_id($exam_id = "") {
+	public function get_exam_by_id($exam_id = "")
+	{
 		return $this->db->get_where('exams', array('id' => $exam_id))->row_array();
 	}
 	//END EXAM section
 
 
 	//START MARKS section
-	public function get_marks($class_id = "", $section_id = "", $subject_id = "", $exam_id = "") {
+	public function get_marks($class_id = "", $section_id = "", $subject_id = "", $exam_id = "")
+	{
 		$checker = array(
 			'class_id' => $class_id,
 			'section_id' => $section_id,
@@ -714,7 +798,8 @@ class Crud_model extends CI_Model {
 		$this->db->where($checker);
 		return $this->db->get('marks');
 	}
-	public function mark_insert($class_id = "", $section_id = "", $subject_id = "", $exam_id = "") {
+	public function mark_insert($class_id = "", $section_id = "", $subject_id = "", $exam_id = "")
+	{
 		$student_enrolments = $this->user_model->student_enrolment($section_id)->result_array();
 		foreach ($student_enrolments as $student_enrolment) {
 			$checker = array(
@@ -728,13 +813,14 @@ class Crud_model extends CI_Model {
 			);
 			$this->db->where($checker);
 			$number_of_rows = $this->db->get('marks')->num_rows();
-			if($number_of_rows == 0) {
+			if ($number_of_rows == 0) {
 				$this->db->insert('marks', $checker);
 			}
 		}
 	}
 
-	public function mark_update(){
+	public function mark_update()
+	{
 		$data['student_id'] = html_escape($this->input->post('student_id'));
 		$data['class_id'] = html_escape($this->input->post('class_id'));
 		$data['section_id'] = html_escape($this->input->post('section_id'));
@@ -745,20 +831,21 @@ class Crud_model extends CI_Model {
 		$data['school_id'] = $this->school_id;
 		$data['session'] = $this->active_session;
 		$query = $this->db->get_where('marks', array('student_id' => $data['student_id'], 'class_id' => $data['class_id'], 'section_id' => $data['section_id'], 'subject_id' => $data['subject_id'], 'exam_id' => $data['exam_id'], 'session' => $data['session'], 'school_id' => $data['school_id']));
-		if($query->num_rows() > 0){
+		if ($query->num_rows() > 0) {
 			$update_data['mark_obtained'] = html_escape($this->input->post('mark'));
 			$update_data['comment'] = html_escape($this->input->post('comment'));
 			$row = $query->row();
 			$this->db->where('id', $row->id);
 			$this->db->update('marks', $update_data);
-		}else{
+		} else {
 			$this->db->insert('marks', $data);
 		}
 	}
 	//END MARKS section
 
 	// Grade creation
-	public function grade_create() {
+	public function grade_create()
+	{
 		$data['name'] = html_escape($this->input->post('grade'));
 		$data['grade_point'] = $this->input->post('grade_point');
 		$data['mark_from'] = $this->input->post('mark_from');
@@ -774,7 +861,8 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function grade_update($id = "") {
+	public function grade_update($id = "")
+	{
 		$data['name'] = html_escape($this->input->post('grade'));
 		$data['grade_point'] = $this->input->post('grade_point');
 		$data['mark_from'] = $this->input->post('mark_from');
@@ -805,7 +893,8 @@ class Crud_model extends CI_Model {
 	// Grade ends
 
 	// Student Promotion section Starts
-	public function get_student_list() {
+	public function get_student_list()
+	{
 		$session_from = $this->input->post('session_from');
 		$session_to = $this->input->post('session_to');
 		$class_id_from = $this->input->post('class_id_from');
@@ -819,7 +908,8 @@ class Crud_model extends CI_Model {
 	}
 
 	//promote student
-	public function promote_student($promotion_data = "") {
+	public function promote_student($promotion_data = "")
+	{
 		$promotion_data = explode('-', $promotion_data);
 		$enroll_id = $promotion_data[0];
 		$class_id = $promotion_data[1];
@@ -836,11 +926,13 @@ class Crud_model extends CI_Model {
 	// Student Promotion section Ends
 
 	//STUDENT ACCOUNTING SECTION STARTS
-	public function get_invoice_by_id($id = "") {
+	public function get_invoice_by_id($id = "")
+	{
 		return $this->db->get_where('invoices', array('id' => $id))->row_array();
 	}
 
-	public function get_invoice_by_date_range($date_from = "", $date_to = "", $selected_class = "", $selected_status = "") {
+	public function get_invoice_by_date_range($date_from = "", $date_to = "", $selected_class = "", $selected_status = "")
+	{
 		if ($selected_class != "all") {
 			$this->db->where('class_id', $selected_class);
 		}
@@ -854,7 +946,8 @@ class Crud_model extends CI_Model {
 		return $this->db->get('invoices');
 	}
 
-	public function get_invoice_by_student_id($student_id = "") {
+	public function get_invoice_by_student_id($student_id = "")
+	{
 		$this->db->where('school_id', $this->school_id);
 		$this->db->where('session', $this->active_session);
 		$this->db->where('student_id', $student_id);
@@ -862,13 +955,14 @@ class Crud_model extends CI_Model {
 	}
 
 	// This function will be triggered if parent logs in
-	public function get_invoice_by_parent_id() {
+	public function get_invoice_by_parent_id()
+	{
 		$parent_user_id = $this->session->userdata('user_id');
 		$parent_data = $this->db->get_where('parents', array('user_id' => $parent_user_id))->row_array();
 		$student_list = $this->user_model->get_student_list_of_logged_in_parent();
 		$student_ids = array();
 		foreach ($student_list as $student) {
-			if(!in_array($student['student_id'], $student_ids)){
+			if (!in_array($student['student_id'], $student_ids)) {
 				array_push($student_ids, $student['student_id']);
 			}
 		}
@@ -878,12 +972,13 @@ class Crud_model extends CI_Model {
 			$this->db->where('school_id', $this->school_id);
 			$this->db->where('session', $this->active_session);
 			return $this->db->get('invoices')->result_array();
-		}else{
+		} else {
 			return array();
 		}
 	}
 
-	public function create_single_invoice() {
+	public function create_single_invoice()
+	{
 		$data['title'] = $this->input->post('title');
 		$data['total_amount'] = $this->input->post('total_amount');
 		$data['class_id'] = $this->input->post('class_id');
@@ -923,7 +1018,8 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function create_mass_invoice() {
+	public function create_mass_invoice()
+	{
 		$data['total_amount'] = $this->input->post('total_amount');
 		$data['paid_amount'] = $this->input->post('paid_amount');
 		$data['status'] = $this->input->post('status');
@@ -970,7 +1066,7 @@ class Crud_model extends CI_Model {
 				'status' => true,
 				'notification' => get_phrase('invoice_added_successfully')
 			);
-		}else{
+		} else {
 			$response = array(
 				'status' => false,
 				'notification' => get_phrase('no_student_found')
@@ -979,7 +1075,8 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function update_invoice($id = "") {
+	public function update_invoice($id = "")
+	{
 
 		/*GET THE PREVIOUS INVOICE DETAILS FOR GETTING THE PAID AMOUNT*/
 		$previous_invoice_data = $this->db->get_where('invoices', array('id' => $id))->row_array();
@@ -1013,7 +1110,7 @@ class Crud_model extends CI_Model {
 		/*KEEPING TRACK OF PAYMENT DATE*/
 		if ($this->input->post('paid_amount') != $previous_invoice_data && $this->input->post('paid_amount') > 0) {
 			$data['updated_at'] = strtotime(date('d-M-Y'));
-		}elseif ($this->input->post('paid_amount') == 0 || $this->input->post('paid_amount') == "") {
+		} elseif ($this->input->post('paid_amount') == 0 || $this->input->post('paid_amount') == "") {
 			$data['updated_at'] = 0;
 		}
 
@@ -1027,7 +1124,8 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function delete_invoice($id = "") {
+	public function delete_invoice($id = "")
+	{
 		$this->db->where('id', $id);
 		$this->db->delete('invoices');
 
@@ -1040,7 +1138,8 @@ class Crud_model extends CI_Model {
 	//STUDENT ACCOUNTING SECTION ENDS
 
 	//Expense Category Starts
-	public function get_expense_categories($id = "") {
+	public function get_expense_categories($id = "")
+	{
 		if ($id > 0) {
 			$this->db->where('id', $id);
 		}
@@ -1048,7 +1147,8 @@ class Crud_model extends CI_Model {
 		$this->db->where('session', $this->active_session);
 		return $this->db->get('expense_categories');
 	}
-	public function create_expense_category() {
+	public function create_expense_category()
+	{
 		$data['name'] = $this->input->post('name');
 		$data['school_id'] = $this->school_id;
 		$data['session'] = $this->active_session;
@@ -1060,7 +1160,8 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function update_expense_category($id) {
+	public function update_expense_category($id)
+	{
 		$data['name'] = $this->input->post('name');
 		$this->db->where('id', $id);
 		$this->db->update('expense_categories', $data);
@@ -1071,7 +1172,8 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function delete_expense_category($id) {
+	public function delete_expense_category($id)
+	{
 		$this->db->where('id', $id);
 		$this->db->delete('expense_categories');
 		$response = array(
@@ -1083,11 +1185,13 @@ class Crud_model extends CI_Model {
 	//Expense Category Ends
 
 	//Expense Manager Starts
-	public function get_expense_by_id($id = "") {
+	public function get_expense_by_id($id = "")
+	{
 		return $this->db->get_where('expenses', array('id' => $id))->row_array();
 	}
 
-	public function get_expense($date_from = "", $date_to = "", $expense_category_id = "") {
+	public function get_expense($date_from = "", $date_to = "", $expense_category_id = "")
+	{
 		if ($expense_category_id > 0) {
 			$this->db->where('expense_category_id', $expense_category_id);
 		}
@@ -1099,7 +1203,8 @@ class Crud_model extends CI_Model {
 	}
 
 	// creating
-	public function create_expense() {
+	public function create_expense()
+	{
 		$data['date'] = strtotime($this->input->post('date'));
 		$data['amount'] = $this->input->post('amount');
 		$data['expense_category_id'] = $this->input->post('expense_category_id');
@@ -1116,7 +1221,8 @@ class Crud_model extends CI_Model {
 	}
 
 	// updating
-	public function update_expense($id = "") {
+	public function update_expense($id = "")
+	{
 		$data['date'] = strtotime($this->input->post('date'));
 		$data['amount'] = $this->input->post('amount');
 		$data['expense_category_id'] = $this->input->post('expense_category_id');
@@ -1133,7 +1239,8 @@ class Crud_model extends CI_Model {
 	}
 
 	// deleting
-	public function delete_expense($id = "") {
+	public function delete_expense($id = "")
+	{
 		$this->db->where('id', $id);
 		$this->db->delete('expenses');
 
@@ -1146,7 +1253,8 @@ class Crud_model extends CI_Model {
 	// Expense Manager Ends
 
 	// PROVIDE ENTRY AFTER PAYMENT SUCCESS
-	public function payment_success($data = array()) {
+	public function payment_success($data = array())
+	{
 		$this->db->where('id', $data['invoice_id']);
 		$invoice_details = $this->db->get('invoices')->row_array();
 		$due_amount = $invoice_details['total_amount'] - $invoice_details['paid_amount'];
@@ -1163,7 +1271,8 @@ class Crud_model extends CI_Model {
 	}
 
 	// Back Office Section Starts
-	public function get_session($id = "") {
+	public function get_session($id = "")
+	{
 		if ($id > 0) {
 			$this->db->where('id', $id);
 		}
@@ -1172,7 +1281,8 @@ class Crud_model extends CI_Model {
 	}
 
 	// Book Manager
-	public function get_books() {
+	public function get_books()
+	{
 		$checker = array(
 			'session' => $this->active_session,
 			'school_id' => $this->school_id
@@ -1180,11 +1290,13 @@ class Crud_model extends CI_Model {
 		return $this->db->get_where('books', $checker);
 	}
 
-	public function get_book_by_id($id = "") {
+	public function get_book_by_id($id = "")
+	{
 		return $this->db->get_where('books', array('id' => $id))->row_array();
 	}
 
-	public function create_book() {
+	public function create_book()
+	{
 		$data['name']      = $this->input->post('name');
 		$data['author']    = $this->input->post('author');
 		$data['copies']    = $this->input->post('copies');
@@ -1199,7 +1311,8 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function update_book($id = "") {
+	public function update_book($id = "")
+	{
 		$data['name']      = $this->input->post('name');
 		$data['author']    = $this->input->post('author');
 		$data['copies']    = $this->input->post('copies');
@@ -1216,7 +1329,8 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function delete_book($id = "") {
+	public function delete_book($id = "")
+	{
 		$this->db->where('id', $id);
 		$this->db->delete('books');
 
@@ -1228,23 +1342,27 @@ class Crud_model extends CI_Model {
 	}
 
 	// Book Issue
-	public function get_book_issues($date_from = "", $date_to = "") {
+	public function get_book_issues($date_from = "", $date_to = "")
+	{
 		$this->db->where('session', $this->active_session);
 		$this->db->where('school_id', $this->school_id);
 		$this->db->where('issue_date >=', $date_from);
 		$this->db->where('issue_date <=', $date_to);
 		return $this->db->get('book_issues');
 	}
-	public function get_book_issues_by_student_id($student_id = "") {
+	public function get_book_issues_by_student_id($student_id = "")
+	{
 		$this->db->where('student_id', $student_id);
 		return $this->db->get('book_issues');
 	}
 
-	public function get_book_issue_by_id($id = "") {
+	public function get_book_issue_by_id($id = "")
+	{
 		return $this->db->get_where('book_issues', array('id' => $id))->row_array();
 	}
 
-	public function create_book_issue() {
+	public function create_book_issue()
+	{
 		$data['book_id']    = $this->input->post('book_id');
 		$data['class_id']   = $this->input->post('class_id');
 		$data['student_id'] = $this->input->post('student_id');
@@ -1261,7 +1379,8 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function update_book_issue($id = "") {
+	public function update_book_issue($id = "")
+	{
 		$data['book_id']    = $this->input->post('book_id');
 		$data['class_id']   = $this->input->post('class_id');
 		$data['student_id'] = $this->input->post('student_id');
@@ -1279,7 +1398,8 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function return_issued_book($id = "") {
+	public function return_issued_book($id = "")
+	{
 		$data['status']   = 1;
 
 		$this->db->where('id', $id);
@@ -1292,11 +1412,13 @@ class Crud_model extends CI_Model {
 		return json_encode($response);
 	}
 
-	public function get_number_of_issued_book_by_id($id) {
+	public function get_number_of_issued_book_by_id($id)
+	{
 		return $this->db->get_where('book_issues', array('book_id' => $id, 'status' => 0))->num_rows();
 	}
 
-	public function delete_book_issue($id = "") {
+	public function delete_book_issue($id = "")
+	{
 		$this->db->where('id', $id);
 		$this->db->delete('book_issues');
 
@@ -1308,30 +1430,34 @@ class Crud_model extends CI_Model {
 	}
 
 	//SCHOOL DETAILS
-	public function get_schools() {
+	public function get_schools()
+	{
 		if (!addon_status('multi-school')) {
 			$this->db->where('id', school_id());
 		}
 		$schools = $this->db->get('schools');
 		return $schools;
 	}
-	public function get_school_details_by_id($school_id = "") {
+	public function get_school_details_by_id($school_id = "")
+	{
 		return $this->db->get_where('schools', array('id' => $school_id))->row_array();
 	}
 	// Back Office Section Ends
 
 	// GET INSTALLED ADDONS
-	public function get_addons($unique_identifier = "") {
+	public function get_addons($unique_identifier = "")
+	{
 		if ($unique_identifier != "") {
 			$addons = $this->db->get_where('addons', array('unique_identifier' => $unique_identifier));
-		}else{
+		} else {
 			$addons = $this->db->get_where('addons');
 		}
 		return $addons;
 	}
 
 	// A function to convert excel to csv
-	public function excel_to_csv($file_path = "", $rename_to = "") {
+	public function excel_to_csv($file_path = "", $rename_to = "")
+	{
 		//read file from path
 		$inputFileType = PHPExcel_IOFactory::identify($file_path);
 		$objReader = PHPExcel_IOFactory::createReader($inputFileType);
@@ -1341,16 +1467,16 @@ class Crud_model extends CI_Model {
 		if ($objPHPExcel->getSheetCount() > 1) {
 			foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
 				$objPHPExcel->setActiveSheetIndex($index);
-				$fileName = strtolower(str_replace(array("-"," "), "_", $worksheet->getTitle()));
-				$outFile = str_replace(".", "", $fileName) .".csv";
+				$fileName = strtolower(str_replace(array("-", " "), "_", $worksheet->getTitle()));
+				$outFile = str_replace(".", "", $fileName) . ".csv";
 				$objWriter->setSheetIndex($index);
-				$objWriter->save("assets/csv_file/".$outFile);
+				$objWriter->save("assets/csv_file/" . $outFile);
 				$index++;
 			}
-		}else{
+		} else {
 			$outFile = $rename_to;
 			$objWriter->setSheetIndex($index);
-			$objWriter->save("assets/csv_file/".$outFile);
+			$objWriter->save("assets/csv_file/" . $outFile);
 		}
 
 		return true;

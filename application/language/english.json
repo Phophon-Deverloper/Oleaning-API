@@ -1088,5 +1088,6 @@
     "update_category": "Update category",
     "classroom_deleted_successfully": "Classroom deleted successfully",
     "select_a_catergory": "Select a catergory",
-    "please_select_a_category": "Please select a category"
+    "please_select_a_category": "Please select a category",
+    "course_created_successfully": "Course created successfully"
 }
