@@ -236,7 +236,7 @@ class Crud_model extends CI_Model
 			$current_module_id = null;
 			$current_submodule_id = null;
 			while(($all_data = fgetcsv($handle, 1000, ",")) !== FALSE) { // Check opening the file is OK!
-				if ($count > 0) {
+				if ($count > 1) {
 					// if module is not null
 					if(!empty(html_escape($all_data[1]))){
 						$module_data['module_name'] = html_escape($all_data[1]);
@@ -274,7 +274,6 @@ class Crud_model extends CI_Model
 				}
 				$count++;
 			}
-			
 			fclose($handle);
 		}
 		$response = array(
