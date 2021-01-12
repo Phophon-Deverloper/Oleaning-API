@@ -17,12 +17,8 @@ class Oauth extends REST_Controller {
         $userdata = $this->db->get_where("users", ['email' => $jsonArray['email']])->row_array();
         if ($jsonArray['password'] == $userdata['password']) {
             $jwttoken = $this->tokenHandler->GenerateToken($userdata);
-            // $this->db->set('authentication_key', $jwttoken);
-            // $this->db->where('id', $userdata['id']);
-            // $this->db->update('users');
             $this->response($jwttoken, REST_Controller::HTTP_OK);
         }
-        // $this->response($userdata, REST_Controller::HTTP_OK);
     }
     	
 }
