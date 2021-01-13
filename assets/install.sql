@@ -1306,7 +1306,6 @@ CREATE TABLE `course` (
   `course_image` longtext,
   `category_id` int(11) NOT NULL,
   PRIMARY KEY (`course_id`),
-  UNIQUE KEY `course_id_UNIQUE` (`course_id`),
   KEY `category_id_idx` (`category_id`),
   CONSTRAINT `category_id` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -1324,7 +1323,6 @@ CREATE TABLE `enrollment` (
   `start_time` datetime NOT NULL,
   `finish_time` datetime NOT NULL,
   PRIMARY KEY (`enrollment_id`),
-  UNIQUE KEY `course_id_UNIQUE` (`course_id`),
   KEY `user_id_idx` (`user_id`),
   CONSTRAINT `course_id` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
@@ -1343,8 +1341,6 @@ CREATE TABLE `module` (
   `module_image` longtext,
   `course_id` int(11) NOT NULL,
   PRIMARY KEY (`module_id`),
-  UNIQUE KEY `course_id_UNIQUE` (`course_id`),
-  UNIQUE KEY `module_id_UNIQUE` (`module_id`),
   CONSTRAINT `course_module_id` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -1361,8 +1357,6 @@ CREATE TABLE `submodule` (
   `submodule_description` longtext,
   `module_id` int(11) NOT NULL,
   PRIMARY KEY (`submodule_id`),
-  UNIQUE KEY `module_id_UNIQUE` (`module_id`),
-  UNIQUE KEY `submodule_id_UNIQUE` (`submodule_id`),
   CONSTRAINT `module_id` FOREIGN KEY (`module_id`) REFERENCES `module` (`module_id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -1379,8 +1373,6 @@ CREATE TABLE `title` (
   `title_type` enum('QUIZ','CONTENT') NOT NULL,
   `submodule_id` int(11) NOT NULL,
   PRIMARY KEY (`title_id`),
-  UNIQUE KEY `submodule_id_UNIQUE` (`submodule_id`),
-  UNIQUE KEY `title_id_UNIQUE` (`title_id`),
   CONSTRAINT `submodule_id` FOREIGN KEY (`submodule_id`) REFERENCES `submodule` (`submodule_id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -1400,9 +1392,6 @@ CREATE TABLE `titleprogress` (
   `finish_time` datetime NOT NULL,
   `star` int(11) NOT NULL,
   PRIMARY KEY (`titleprogress_id`),
-  UNIQUE KEY `titleprogress_id_UNIQUE` (`titleprogress_id`),
-  UNIQUE KEY `title_id_UNIQUE` (`title_id`),
-  UNIQUE KEY `enrollment_id_UNIQUE` (`enrollment_id`),
   CONSTRAINT `enrollment_id` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollment` (`enrollment_id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `title_titleprogress_id` FOREIGN KEY (`title_id`) REFERENCES `title` (`title_id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -1417,7 +1406,5 @@ CREATE TABLE `quizchoice` (
   `answer` tinyint(4) NOT NULL,
   `title_id` int(11) NOT NULL,
   PRIMARY KEY (`quizchoice_id`),
-  UNIQUE KEY `title_id_UNIQUE` (`title_id`),
-  UNIQUE KEY `quizchoice_id_UNIQUE` (`quizchoice_id`),
   CONSTRAINT `title_id` FOREIGN KEY (`title_id`) REFERENCES `title` (`title_id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
