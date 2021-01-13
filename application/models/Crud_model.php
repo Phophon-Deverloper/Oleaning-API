@@ -233,9 +233,7 @@ class Crud_model extends CI_Model
 
 		if (($handle = fopen('uploads/csv_file/course.generate.csv', 'r')) !== FALSE) { // Check the resource is valid
 			$count = 0;
-			$current_module_id = null;
-			$current_submodule_id = null;
-			while(($all_data = fgetcsv($handle, 1000, ",")) !== FALSE) { // Check opening the file is OK!
+			while(($all_data = fgetcsv($handle, 0, ",")) !== FALSE) { // Check opening the file is OK!
 				if ($count > 1) {
 					// if module is not null
 					if(!empty(html_escape($all_data[1]))){
@@ -268,7 +266,7 @@ class Crud_model extends CI_Model
 							$quizchoice_data['choice'] = html_escape($all_data[5]);
 							$quizchoice_data['answer'] = html_escape($all_data[6]);
 							$quizchoice_data['title_id'] = $title_id;
-							$this->db->insert('title', $quizchoice_data);
+							$this->db->insert('quizchoice', $quizchoice_data);
 						}
 					}
 				}
