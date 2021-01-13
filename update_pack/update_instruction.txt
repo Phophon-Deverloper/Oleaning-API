@@ -1,0 +1,17 @@
+Update instructions from version 7.0 to 7.1 -
+PLEASE READ AND FOLLOW THE STEPS CAREFULLY.
+
+If your application has been customised, Then keep your file backup and follow the step-by-step instructions below.
+
+1.Replace the system_settings.php file on your server.
+File Location: root directory > application > views > backend > superadmin > settings > system_settings.php
+
+2.Replace the Updater.php file on your server.
+File Location: root directory > application > controllers > Updater.php
+
+3. Login to the admin panel and go to System Settings. You will get a field of product update. Upload the update_7.1.zip file here.
+
+4.Please logout first and again login your application.
+
+The latest version of 7.1. If you face any kind of difficulties, let us know through tickets.
+That's it.
