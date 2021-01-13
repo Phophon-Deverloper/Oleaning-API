@@ -1337,7 +1337,7 @@ CREATE TABLE `enrollment` (
 --
 
 CREATE TABLE `module` (
-  `module_id` int(11) NOT NULL,
+  `module_id` int(11) NOT NULL AUTO_INCREMENT,
   `module_name` varchar(255) NOT NULL,
   `module_description` longtext,
   `module_image` longtext,
@@ -1356,7 +1356,7 @@ CREATE TABLE `module` (
 --
 
 CREATE TABLE `submodule` (
-  `submodule_id` int(11) NOT NULL,
+  `submodule_id` int(11) NOT NULL AUTO_INCREMENT,
   `submodule_name` varchar(255) NOT NULL,
   `submodule_description` longtext,
   `module_id` int(11) NOT NULL,
@@ -1373,7 +1373,7 @@ CREATE TABLE `submodule` (
 --
 
 CREATE TABLE `title` (
-  `title_id` int(11) NOT NULL,
+  `title_id` int(11) NOT NULL AUTO_INCREMENT,
   `title_name` varchar(255) NOT NULL,
   `title_description` longtext,
   `title_type` enum('QUIZ','CONTENT') NOT NULL,
@@ -1391,7 +1391,7 @@ CREATE TABLE `title` (
 --
 
 CREATE TABLE `titleprogress` (
-  `titleprogress_id` int(11) NOT NULL,
+  `titleprogress_id` int(11) NOT NULL AUTO_INCREMENT,
   `status` tinyint(4) NOT NULL,
   `title_id` int(11) NOT NULL,
   `title_type` enum('QUIZ','CONTENT') NOT NULL,
@@ -1412,7 +1412,7 @@ CREATE TABLE `titleprogress` (
 --
 
 CREATE TABLE `quizchoice` (
-  `quizchoice_id` int(11) NOT NULL,
+  `quizchoice_id` int(11) NOT NULL AUTO_INCREMENT,
   `choice` varchar(255) NOT NULL,
   `answer` tinyint(4) NOT NULL,
   `title_id` int(11) NOT NULL,
