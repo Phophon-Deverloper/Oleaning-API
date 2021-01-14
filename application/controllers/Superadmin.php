@@ -193,13 +193,14 @@ class Superadmin extends CI_Controller
     }
 
     if ($param1 == 'list') {
-      $page_data['course_id'] = $param2;
+      $page_data['category_id'] = $param2;
       $this->load->view('backend/superadmin/courses/list', $page_data);
     }
 
     if (empty($param1)) {
       $page_data['folder_name'] = 'courses';
       $page_data['page_title'] = 'courses';
+      $page_data['category_id'] = $this->input->get('category_id');
       $this->load->view('backend/index', $page_data);
     }
   }
@@ -218,29 +219,20 @@ class Superadmin extends CI_Controller
   public function modules($param1 = '', $param2 = '')
   {
 
-    if ($param1 == 'create') {
-      $response = $this->crud_model->subject_create();
-      echo $response;
-    }
-
     if ($param1 == 'update') {
       $response = $this->crud_model->subject_update($param2);
       echo $response;
     }
 
-    if ($param1 == 'delete') {
-      $response = $this->crud_model->subject_delete($param2);
-      echo $response;
-    }
-
     if ($param1 == 'list') {
-      $page_data['class_id'] = $param2;
+      $page_data['course_id'] = $param2;
       $this->load->view('backend/superadmin/modules/list', $page_data);
     }
 
     if (empty($param1)) {
       $page_data['folder_name'] = 'modules';
       $page_data['page_title'] = 'modules';
+      $page_data['course_id'] = $this->input->get('course_id');
       $this->load->view('backend/index', $page_data);
     }
   }
@@ -258,30 +250,21 @@ class Superadmin extends CI_Controller
   //START sub_modules section
   public function sub_modules($param1 = '', $param2 = '')
   {
-
-    if ($param1 == 'create') {
-      $response = $this->crud_model->subject_create();
-      echo $response;
-    }
-
     if ($param1 == 'update') {
       $response = $this->crud_model->subject_update($param2);
       echo $response;
     }
 
-    if ($param1 == 'delete') {
-      $response = $this->crud_model->subject_delete($param2);
-      echo $response;
-    }
-
     if ($param1 == 'list') {
-      $page_data['class_id'] = $param2;
+      $page_data['module_id'] = $param2;
       $this->load->view('backend/superadmin/sub_modules/list', $page_data);
     }
 
     if (empty($param1)) {
       $page_data['folder_name'] = 'sub_modules';
       $page_data['page_title'] = 'sub_modules';
+      $page_data['course_id'] = $this->input->get('course_id');
+      $page_data['module_id'] = $this->input->get('module_id');
       $this->load->view('backend/index', $page_data);
     }
   }
@@ -299,29 +282,32 @@ class Superadmin extends CI_Controller
       //START titles section
       public function titles($param1 = '', $param2 = ''){
 
-        if($param1 == 'create'){
-          $response = $this->crud_model->subject_create();
-          echo $response;
-        }
+        // if($param1 == 'create'){
+        //   $response = $this->crud_model->subject_create();
+        //   echo $response;
+        // }
     
         if($param1 == 'update'){
           $response = $this->crud_model->subject_update($param2);
           echo $response;
         }
     
-        if($param1 == 'delete'){
-          $response = $this->crud_model->subject_delete($param2);
-          echo $response;
-        }
+        // if($param1 == 'delete'){
+        //   $response = $this->crud_model->subject_delete($param2);
+        //   echo $response;
+        // }
     
         if($param1 == 'list'){
-          $page_data['class_id'] = $param2;
+          $page_data['submodule_id'] = $param2;
           $this->load->view('backend/superadmin/titles/list', $page_data);
         }
     
         if(empty($param1)){
           $page_data['folder_name'] = 'titles';
           $page_data['page_title'] = 'titles';
+          $page_data['course_id'] = $this->input->get('course_id');
+          $page_data['module_id'] = $this->input->get('module_id');
+          $page_data['submodule_id'] = $this->input->get('submodule_id');
           $this->load->view('backend/index', $page_data);
         }
       }

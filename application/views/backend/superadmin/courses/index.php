@@ -54,7 +54,7 @@ var showAllSubjects = function () {
     var category_id = $('#category_id').val();
     if(category_id != ""){
         $.ajax({
-            url: '<?php echo route('categories/list/') ?>'+category_id,
+            url: '<?php echo route('courses/list/') ?>'+category_id,
             success: function(response){
                 $('.subject_content').html(response);
             }

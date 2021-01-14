@@ -2,7 +2,7 @@
 $school_id = school_id();
 $categories = $this->db->get('category')->result_array();
 if (count($categories) > 0): ?>
-<table id="basic-datatable" class="table table-striped dt-responsive nowrap" width="100%">
+<table id="basic-datatable" class="table table-hover dt-responsive nowrap" width="100%">
 	<thead>
 		<tr style="background-color: #313a46; color: #ababab;">
 			<th><?php echo get_phrase('name'); ?></th>
@@ -12,7 +12,7 @@ if (count($categories) > 0): ?>
 	<tbody>
 		<?php foreach($categories as $category):?>
 			<tr>
-				<td><?php echo $category['category_name']; ?></td>
+				<td onclick="location.href ='<?php echo base_url('superadmin/courses?category_id='.$category['category_id']); ?>'"><?php echo $category['category_name']; ?></td>
 				<td>
 					<div class="dropdown text-center">
 						<button type="button" class="btn btn-sm btn-icon btn-rounded btn-outline-secondary dropdown-btn dropdown-toggle arrow-none card-drop" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></button>

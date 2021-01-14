@@ -1,9 +1,9 @@
 <?php
-if (isset($class_id)):
+if (isset($module_id)):
   $school_id  = school_id();
-  $check_data = $this->db->get_where('subjects', array('school_id' => $school_id, 'session' => active_session(), 'class_id' => $class_id))->result_array();
-  if (count($check_data) > 0):?>
-  <table id="basic-datatable" class="table table-striped dt-responsive nowrap" width="100%">
+  $sub_modules = $this->db->get_where('submodule', array('module_id' => $module_id))->result_array();
+  if (count($sub_modules) > 0):?>
+  <table id="basic-datatable" class="table table-hover dt-responsive nowrap" width="100%">
     <thead>
       <tr style="background-color: #313a46; color: #ababab;">
         <th><?php echo get_phrase('name'); ?></th>
@@ -12,21 +12,18 @@ if (isset($class_id)):
     </thead>
     <tbody>
       <?php
-      $school_id = school_id();
-      $subjects = $this->db->get_where('subjects', array('school_id' => $school_id, 'session' => active_session(), 'class_id' => $class_id))->result_array();
-      foreach($subjects as $subject){
+      foreach($sub_modules as $sub_module){
         ?>
         <tr>
-          <td><?php echo $subject['name']; ?></td>
+          <td onclick="location.href ='<?php echo base_url('superadmin/titles?module_id='.$sub_module['submodule_id'].'&submodule_id='.$sub_module['submodule_id']); ?>'"><?php echo $sub_module['submodule_name']; ?></td>
           <td>
-
             <div class="dropdown text-center">
     					<button type="button" class="btn btn-sm btn-icon btn-rounded btn-outline-secondary dropdown-btn dropdown-toggle arrow-none card-drop" data-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></button>
     					<div class="dropdown-menu dropdown-menu-right">
     						<!-- item-->
-    						<a href="javascript:void(0);" class="dropdown-item" onclick="rightModal('<?php echo site_url('modal/popup/sub_modules/edit/'.$subject['id'])?>', '<?php echo get_phrase('update_sub_module'); ?>');"><?php echo get_phrase('edit'); ?></a>
+    						<a href="javascript:void(0);" class="dropdown-item" onclick="rightModal('<?php echo site_url('modal/popup/sub_modules/edit/'.$sub_module['submodule_id'])?>', '<?php echo get_phrase('sub_module_detail'); ?>');"><?php echo get_phrase('detail'); ?></a>
     						<!-- item-->
-    						<!-- <a href="javascript:void(0);" class="dropdown-item" onclick="confirmModal('<?php echo route('subject/delete/'.$subject['id']); ?>', showAllSubjects)"><?php echo get_phrase('delete'); ?></a> -->
+    		
     					</div>
     				</div>
           </td>

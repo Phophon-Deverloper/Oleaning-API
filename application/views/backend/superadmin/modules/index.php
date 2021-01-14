@@ -21,9 +21,11 @@
                     <select name="class_id" id="class_id" class="form-control select2" data-toggle = "select2" required>
                         <option value=""><?php echo get_phrase('select_a_course'); ?></option>
                         <?php
-                        $classes = $this->db->get_where('classes', array('school_id' => $school_id))->result_array();?>
-                        <?php foreach ($classes as $class): ?>
-                            <option value="<?php echo $class['id']; ?>"><?php echo $class['name']; ?></option>
+                        $courses = $this->db->get('course')->result_array();?>
+                        <?php foreach ($courses as $course): ?>
+                            <option value="<?php echo $course['course_id']; ?>" <?php if ($course['course_id'] == $course_id) {
+                                                          echo 'selected';
+                                                        } ?>><?php echo $course['course_name']; ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -41,19 +43,19 @@
 
 <script>
 function filter_class(){
-    var class_id = $('#class_id').val();
-    if(class_id != ""){
+    var course_id = $('#class_id').val();
+    if(course_id != ""){
         showAllSubjects();
     }else{
-        toastr.error('<?php echo get_phrase('please_select_a_class'); ?>');
+        toastr.error('<?php echo get_phrase('please_select_a_course'); ?>');
     }
 }
 
 var showAllSubjects = function () {
-    var class_id = $('#class_id').val();
-    if(class_id != ""){
+    var course_id = $('#class_id').val();
+    if(course_id != ""){
         $.ajax({
-            url: '<?php echo route('modules/list/') ?>'+class_id,
+            url: '<?php echo route('modules/list/') ?>'+course_id,
             success: function(response){
                 $('.subject_content').html(response);
             }

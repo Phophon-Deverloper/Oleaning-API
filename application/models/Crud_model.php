@@ -282,6 +282,34 @@ class Crud_model extends CI_Model
 
 		return json_encode($response);
 	}
+	public function course_update($param2 = '')
+	{
+		$data['course_name'] = html_escape($this->input->post('course_name'));
+		$data['course_description'] = html_escape($this->input->post('course_description'));
+		// $data['course_image_url'] = html_escape($this->input->post('course_image_url'));
+		$data['category_id'] = html_escape($this->input->post('category_id'));
+
+		$this->db->where('course_id', $param2);
+		$this->db->update('course', $data);
+
+		$response = array(
+			'status' => true,
+			'notification' => get_phrase('course_updated_successfully')
+		);
+		return json_encode($response);
+	}
+
+	public function course_delete($param2 = '')
+	{
+		$this->db->where('course_id', $param2);
+		$this->db->delete('course');
+
+		$response = array(
+			'status' => true,
+			'notification' => get_phrase('course_deleted_successfully')
+		);
+		return json_encode($response);
+	}
 	//END course section 
 
 

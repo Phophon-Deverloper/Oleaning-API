@@ -1,36 +1,34 @@
 <?php $school_id = school_id(); ?>
-<?php $subjects = $this->db->get_where('subjects', array('id' => $param1))->result_array(); ?>
+<?php $subjects = $this->db->get_where('module', array('module_id' => $param1))->result_array(); ?>
 <?php foreach ($subjects as $subject) { ?>
-  <form method="POST" class="d-block ajaxForm" action="<?php echo route('subject/update/' . $param1); ?>">
+  <form method="POST" class="d-block ajaxForm" action="<?php echo route('module/update/' . $param1); ?>">
     <div class="form-row">
 
       <div class="form-group col-md-12">
-        <label for="class"><?php echo get_phrase('module'); ?></label>
-        <select name="class_id" id="class_id_on_create" class="form-control select2" data-toggle="select2" required>
+        <label for="class"><?php echo get_phrase('course'); ?></label>
+        <select name="class_id" id="class_id_on_create" class="form-control select2" data-toggle="select2" disabled>
           <option value=""><?php echo get_phrase('select_a_course'); ?></option>
           <?php
-          $classes = $this->db->get_where('classes', array('school_id' => $school_id))->result_array();
-          foreach ($classes as $class) {
+          $courses = $this->db->get('course')->result_array();
+          foreach ($courses as $course) {
           ?>
-            <option value="<?php echo $class['id']; ?>" <?php if ($class['id'] == $subject['class_id']) {
+            <option value="<?php echo $course['course_id']; ?>" <?php if ($course['course_id'] == $subject['course_id']) {
                                                           echo 'selected';
-                                                        } ?>><?php echo $class['name']; ?></option>
+                                                        } ?>><?php echo $course['course_name']; ?></option>
           <?php } ?>
         </select>
-        <small id="class_help" class="form-text text-muted"><?php echo get_phrase('select_a_class'); ?></small>
-      </div>
-
+      </div>                                        
 
       <div class="form-group col-md-12">
-        <label for="name"><?php echo get_phrase('sub_module_name'); ?></label>
-        <input type="text" class="form-control" id="name" name="name" value="<?php echo $subject['name']; ?>" required>
-        <small id="name_help" class="form-text text-muted"><?php echo get_phrase('provide_sub_module_name'); ?></small>
+        <label for="name"><?php echo get_phrase('module_name'); ?></label>
+        <input type="text" class="form-control" id="name" name="name" value="<?php echo $subject['module_name']; ?>" disabled>
+        <small id="name_help" class="form-text text-muted"><?php echo get_phrase('provide_module_name'); ?></small>
       </div>
 
 
-      <div class="form-group  col-md-12">
+      <!-- <div class="form-group  col-md-12">
         <button class="btn btn-block btn-primary" type="submit"><?php echo get_phrase('update_module'); ?></button>
-      </div>
+      </div> -->
     </div>
   </form>
 <?php } ?>
