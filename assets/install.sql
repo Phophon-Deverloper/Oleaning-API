@@ -1408,3 +1408,13 @@ CREATE TABLE `quizchoice` (
   PRIMARY KEY (`quizchoice_id`),
   CONSTRAINT `title_id` FOREIGN KEY (`title_id`) REFERENCES `title` (`title_id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `assign` (
+  `assign_id` int(11) NOT NULL AUTO_INCREMENT,
+  `course_id` int(11) NOT NULL,
+  `class_id` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`assign_id`),
+  KEY `class_id_idx` (`class_id`),
+  CONSTRAINT `assign_course_id` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `assign_class_id` FOREIGN KEY (`class_id`) REFERENCES `classes` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

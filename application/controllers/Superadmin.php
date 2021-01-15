@@ -333,6 +333,11 @@ class Superadmin extends CI_Controller
           $response = $this->crud_model->subject_update($param2);
           echo $response;
         }
+
+        if($param1 == 'manage'){
+          $response = $this->crud_model->assign_update($param2);
+          echo $response;
+        }
     
         if($param1 == 'delete'){
           $response = $this->crud_model->subject_delete($param2);

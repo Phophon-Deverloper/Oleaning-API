@@ -311,6 +311,22 @@ class Crud_model extends CI_Model
 		return json_encode($response);
 	}
 	//END course section 
+	public function assign_update($param1 = '')
+	{
+		$class_assign_id = html_escape($this->input->post('class_assign_id'));
+		$this->db->where('course_id', $param1);
+		$this->db->delete('assign');
+			
+		foreach ($class_assign_id as $class_id) {
+			$this->db->insert('assign', array('course_id'=>$param1, 'class_id'=>$class_id));
+		}
+
+		$response = array(
+			'status' => true,
+			'notification' => get_phrase('section_list_updated_successfully')
+		);
+		return json_encode($response);
+	}
 
 
 	//START MANAGE_SESSION section
