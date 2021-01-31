@@ -13,9 +13,9 @@ class Title extends REST_Controller {
 
 	public function index_get($id)
 	{
-        $received_Token = $this->input->request_headers('Authorization');
-        if (isset($received_Token['Authorization'])){
-            $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
+        $received_Token = $this->input->request_headers('authorization');
+        if (isset($received_Token['authorization'])){
+            $jwtData = $this->tokenHandler->DecodeToken($received_Token['authorization']);
             if ($id == 0) {
                 $this->response(REST_Controller::HTTP_BAD_REQUEST);
             }else {

@@ -16,9 +16,9 @@ class Leaderboard extends REST_Controller {
         $scoreuserdata = array();
         $board = [];
         $progress = array();
-        $received_Token = $this->input->request_headers('Authorization');
-        if (isset($received_Token['Authorization'])){
-            $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
+        $received_Token = $this->input->request_headers('authorization');
+        if (isset($received_Token['authorization'])){
+            $jwtData = $this->tokenHandler->DecodeToken($received_Token['authorization']);
             $userdata = $this->db->get_where("users")->result();
             foreach ($userdata as $data) {
                 $data = (array) $data;

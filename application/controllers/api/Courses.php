@@ -13,10 +13,10 @@ class Courses extends REST_Controller {
 
 	public function index_get()
 	{
-        $received_Token = $this->input->request_headers('Authorization');
+        $received_Token = $this->input->request_headers('authorization');
         $param =  $this->input->get();
-        if (isset($received_Token['Authorization'])){
-            $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
+        if (isset($received_Token['authorization'])){
+            $jwtData = $this->tokenHandler->DecodeToken($received_Token['authorization']);
             if ($param['category_id'] != "none") {
                 $data = $this->db->get_where("course", ['category_id' => $param['category_id']])->row_array();
             }else{
@@ -30,10 +30,10 @@ class Courses extends REST_Controller {
 
     public function module_get($id)
 	{
-        $received_Token = $this->input->request_headers('Authorization');
+        $received_Token = $this->input->request_headers('authorization');
         $param =  $this->input->get();
-        if (isset($received_Token['Authorization'])){
-            $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
+        if (isset($received_Token['authorization'])){
+            $jwtData = $this->tokenHandler->DecodeToken($received_Token['authorization']);
             $data = $this->db->get_where("module", ['course_id' => $id])->result();
             $this->response($data, REST_Controller::HTTP_OK);
         }else{
@@ -43,14 +43,14 @@ class Courses extends REST_Controller {
 
     public function my_get($id = 0)
 	{
-        $received_Token = $this->input->request_headers('Authorization');
+        $received_Token = $this->input->request_headers('authorization');
         $userCouseData = array();
         $submoduleuser = array();
         $moduleuser = array();
         $maxmodule;
         $currentmodule;
-        if (isset($received_Token['Authorization'])){
-            $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
+        if (isset($received_Token['authorization'])){
+            $jwtData = $this->tokenHandler->DecodeToken($received_Token['authorization']);
             if ($id != 0) {
                 $moduledata = $this->db->get_where("module", ['course_id' => $id])->result();
                 $coursedata = $this->db->get_where("course", ['course_id' => $id])->row_array();
@@ -104,9 +104,9 @@ class Courses extends REST_Controller {
 
     public function my_post()
 	{
-        $received_Token = $this->input->request_headers('Authorization');
-        if (isset($received_Token['Authorization'])){
-            $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
+        $received_Token = $this->input->request_headers('authorization');
+        if (isset($received_Token['authorization'])){
+            $jwtData = $this->tokenHandler->DecodeToken($received_Token['authorization']);
             $jsonArray = json_decode($this->input->raw_input_stream, true);
             if ($jsonArray == []) {
                 $this->response(REST_Controller::HTTP_BAD_REQUEST);
@@ -123,9 +123,9 @@ class Courses extends REST_Controller {
 
     public function index_post()
 	{
-        $received_Token = $this->input->request_headers('Authorization');
-        if (isset($received_Token['Authorization'])){
-            $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
+        $received_Token = $this->input->request_headers('authorization');
+        if (isset($received_Token['authorization'])){
+            $jwtData = $this->tokenHandler->DecodeToken($received_Token['authorization']);
             $jsonArray = json_decode($this->input->raw_input_stream, true);
             if ($jsonArray == []) {
                 $this->response(REST_Controller::HTTP_BAD_REQUEST);
@@ -179,9 +179,9 @@ class Courses extends REST_Controller {
     }
 
     public function index_delete($id){
-        $received_Token = $this->input->request_headers('Authorization');
-        if (isset($received_Token['Authorization'])){
-            $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
+        $received_Token = $this->input->request_headers('authorization');
+        if (isset($received_Token['authorization'])){
+            $jwtData = $this->tokenHandler->DecodeToken($received_Token['authorization']);
             if ($id == 0) {
                 $this->response(REST_Controller::HTTP_BAD_REQUEST);
             }else{

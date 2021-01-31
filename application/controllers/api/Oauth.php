@@ -11,7 +11,7 @@ class Oauth extends REST_Controller {
         $this->tokenHandler = new TokenHandler();
     }
 
-	public function token_get()
+	public function token_post()
 	{
         $jsonArray = json_decode($this->input->raw_input_stream, true);
         $userdata = $this->db->get_where("users", ['email' => $jsonArray['email']])->row_array();

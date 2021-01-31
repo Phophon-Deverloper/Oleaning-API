@@ -13,9 +13,9 @@ class Category extends REST_Controller {
 
 	public function index_get()
 	{
-        $received_Token = $this->input->request_headers('Authorization');
-        if (isset($received_Token['Authorization'])){
-            $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
+        $received_Token = $this->input->request_headers('authorization');
+        if (isset($received_Token['authorization'])){
+            $jwtData = $this->tokenHandler->DecodeToken($received_Token['authorization']);
             $data = $this->db->get("category")->result();
             $this->response($data, REST_Controller::HTTP_OK);
         }else{
@@ -24,9 +24,9 @@ class Category extends REST_Controller {
     }
     
     public function index_post(){
-        $received_Token = $this->input->request_headers('Authorization');
-        if (isset($received_Token['Authorization'])){
-            $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
+        $received_Token = $this->input->request_headers('authorization');
+        if (isset($received_Token['authorization'])){
+            $jwtData = $this->tokenHandler->DecodeToken($received_Token['authorization']);
             $jsonArray = json_decode($this->input->raw_input_stream, true);
             if ($jsonArray["category_name"] == []) {
                 $this->response(REST_Controller::HTTP_BAD_REQUEST);
@@ -40,9 +40,9 @@ class Category extends REST_Controller {
     }
 
     public function index_delete($id){
-        $received_Token = $this->input->request_headers('Authorization');
-        if (isset($received_Token['Authorization'])){
-            $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
+        $received_Token = $this->input->request_headers('authorization');
+        if (isset($received_Token['authorization'])){
+            $jwtData = $this->tokenHandler->DecodeToken($received_Token['authorization']);
             if ($id == 0) {
                 $this->response(REST_Controller::HTTP_BAD_REQUEST);
             }else{

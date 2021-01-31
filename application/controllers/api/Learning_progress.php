@@ -13,9 +13,9 @@ class Learning_progress extends REST_Controller {
 
 	public function title_post()
 	{
-        $received_Token = $this->input->request_headers('Authorization');
-        if (isset($received_Token['Authorization'])){
-            $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
+        $received_Token = $this->input->request_headers('authorization');
+        if (isset($received_Token['authorization'])){
+            $jwtData = $this->tokenHandler->DecodeToken($received_Token['authorization']);
             $jsonArray = json_decode($this->input->raw_input_stream, true);
             if ($jsonArray == []) {
                 $this->response(REST_Controller::HTTP_BAD_REQUEST);

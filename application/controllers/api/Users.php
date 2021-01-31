@@ -20,19 +20,24 @@ class Users extends REST_Controller {
 	public function profile_get()
 	{
             $star = array("star"=>0);
-            $progress = array("progress"=>0);
-            $received_Token = $this->input->request_headers('Authorization');
-            if (isset($received_Token['Authorization'])){
-                $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
+            $progress = array("course_progress"=>0);
+            $titleprogress = array("title_progress"=>0);
+            $received_Token = $this->input->request_headers('authorization');
+            if (isset($received_Token['authorization'])){
+                $jwtData = $this->tokenHandler->DecodeToken($received_Token['authorization']);
                 $userdata = $this->db->get_where("users", ['id' => $jwtData['id']])->row_array();
                 $coursedata= $this->db->get_where("enrollment", ['user_id' => $userdata['id']])->result();
                 foreach ($coursedata as $dataobj) {
                     $data = (array)$dataobj;
-                    $titledata = $this->db->get_where("titleprogress", ['enrollment_id' => $data['enrollment_id']])->row_array();
-                    $progress['progress'] += 1 ;
-                    $star['star'] = $star['star'] + $titledata['star'];
+                    $titledata = $this->db->get_where("titleprogress", ['enrollment_id' => $data['enrollment_id']])->result();
+                    foreach ($titledata as $datatitle) {
+                        $datatitle  = (array)$datatitle;
+                        $titleprogress['title_progress'] += 1 ;
+                        $star['star'] = $star['star'] + $datatitle['star'];
+                    }
+                    $progress['course_progress'] += 1 ;
                 }
-                $userdata = $userdata + $star + $progress;
+                $userdata = $userdata + $star + $progress + $titleprogress;
                 $this->response($userdata, REST_Controller::HTTP_OK);
             }else{
                 $this->response(REST_Controller::HTTP_UNAUTHORIZED);
@@ -56,9 +61,9 @@ class Users extends REST_Controller {
 
     public function resetpassword_patch()
     {
-        $received_Token = $this->input->request_headers('Authorization');
-        if (isset($received_Token['Authorization'])){
-            $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
+        $received_Token = $this->input->request_headers('authorization');
+        if (isset($received_Token['authorization'])){
+            $jwtData = $this->tokenHandler->DecodeToken($received_Token['authorization']);
             $jsonArray = json_decode($this->input->raw_input_stream, true);
             if ($jsonArray == []) {
                 $this->response(REST_Controller::HTTP_BAD_REQUEST);
@@ -80,9 +85,9 @@ class Users extends REST_Controller {
 
     public function profile_put()
     {
-        $received_Token = $this->input->request_headers('Authorization');
-        if (isset($received_Token['Authorization'])){
-            $jwtData = $this->tokenHandler->DecodeToken($received_Token['Authorization']);
+        $received_Token = $this->input->request_headers('authorization');
+        if (isset($received_Token['authorization'])){
+            $jwtData = $this->tokenHandler->DecodeToken($received_Token['authorization']);
             $jsonArray = json_decode($this->input->raw_input_stream, true);
             if ($jsonArray == []) {
                 $this->response(REST_Controller::HTTP_BAD_REQUEST);
